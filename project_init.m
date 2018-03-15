@@ -1,3 +1,6 @@
+addpath(genpath('./biosig')) %adds folder recursively
+addpath(genpath('./eeglab_current')) %adds folder recursively
+
 [s1, h1] = sload('anonymous.20170613.161402.offline.mi.mi_bhbf.gdf'); %1
 [s2, h2] = sload('anonymous.20170613.162331.offline.mi.mi_bhbf.gdf'); %2
 [s3, h3] = sload('anonymous.20170613.162934.offline.mi.mi_bhbf.gdf'); %3
@@ -51,6 +54,7 @@ mean_beta = mean(data_beta, 2);
 car_mu = s - repmat(mean_mu, 1, 16);
 car_beta = s - repmat(mean_beta, 1, 16);
 
+load channel_location_16_10-20_mi.mat
 figure
 topoplot(car_mu(1, :), chanlocs16);
 figure
@@ -58,3 +62,4 @@ topoplot(car_beta(1, :), chanlocs16);
 
 % small laplacian - local artifacts
 % use lap matrix and matrix multiplication
+load laplacian_16_10-20_mi.mat
