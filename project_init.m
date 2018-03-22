@@ -78,3 +78,9 @@ figure
 topoplot(lap_mu(2,:),chanlocs16);
 
 % psd to extract power of the signal for each frequency
+% pwelch
+% should behave according to power law (1/F)
+pwelch(s(:, 1), 256, 256/2, [], 512); % do it only 
+
+% online, pwelch for each window (1 second long) -> buffer -> if full -> pwelch 62.5ms 16Hz
+% power and log on filtered signal
