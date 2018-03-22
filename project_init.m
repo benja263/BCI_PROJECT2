@@ -46,20 +46,26 @@ data_beta = filter(b2, a2, s);
 % fvtool(Hcas);
 
 % CAR - gloabal artifacts
-% wrong so far -> should be done only on one trial, continuous feedback and
-% one class (both hands or both feet)
+% should be done only on one trial, continuous feedback and one class (both hands or both feet)
 mean_mu = mean(data_mu, 2);
 mean_beta = mean(data_beta, 2);
 
 car_mu = s - repmat(mean_mu, 1, 16);
 car_beta = s - repmat(mean_beta, 1, 16);
 
+left_data = data(data(:, 1)==771, :);
+left_start_positions = left_data(:, 2);
+left_stop_positions = left_start_positions +  left_data(:, 3) - 1;
+
+sample_no = left_start_positions(1);
 load channel_location_16_10-20_mi.mat
 figure
-topoplot(car_mu(1, :), chanlocs16);
+topoplot(car_mu(sample_no, :), chanlocs16);
 figure
-topoplot(car_beta(1, :), chanlocs16);
+topoplot(car_beta(sample_no, :), chanlocs16);
 
 % small laplacian - local artifacts
 % use lap matrix and matrix multiplication
 load laplacian_16_10-20_mi.mat
+
+% psd to extract power of the signal for each frequency
