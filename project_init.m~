@@ -68,13 +68,13 @@ topoplot(car_beta(sample_no, :), chanlocs16);
 % use lap matrix and matrix multiplication
 load laplacian_16_10-20_mi.mat
 
-lap_mu=data_mu(left_start_positions:...
+filtered_lap_mu=filtered_mu(left_start_positions:...
     left_stop_positions,:)*lap;
-lap_beta=data_beta(left_start_positions:...
+filtered_lap_beta=filtered_beta(left_start_positions:...
     left_stop_positions,:)*lap;
 figure
-topoplot(lap_beta(2,:),chanlocs16);
+topoplot(filtered_lap_beta,chanlocs16)
 figure
-topoplot(lap_mu(2,:),chanlocs16);
+topoplot(filtered_lap_mu
 
 % psd to extract power of the signal for each frequency
