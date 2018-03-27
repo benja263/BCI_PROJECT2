@@ -84,3 +84,12 @@ pwelch(s(:, 1), 256, 256/2, [], 512); % do it only
 
 % online, pwelch for each window (1 second long) -> buffer -> if full -> pwelch 62.5ms 16Hz
 % power and log on filtered signal
+
+% moving average filter
+a = 2;
+b = [1/3 1/3 1/3];
+moving_average_mu = filter(b,a,data_mu(left_start_positions:...
+    left_stop_positions,:));
+moving_average_beta = filter(b,a,data_beta(left_start_positions:...
+    left_stop_positions,:));
+
