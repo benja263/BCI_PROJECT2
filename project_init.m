@@ -19,7 +19,7 @@ data = [[h1.EVENT.TYP; h2.EVENT.TYP; h3.EVENT.TYP;], [h1.EVENT.POS; h2.EVENT.POS
 plot(data(:, 2))
 % jumps because each trial has some delay in the beginning
 
-% motor imagery is in mju frequency band or beta fequency band -> 2 filters
+% motor imagery is in mu frequency band or beta fequency band -> 2 filters
 
 [b1 a1] = butter(4,[7.5 12.5] * 2 / h1.SampleRate);
 h = fvtool(b1,a1); % stable filter
@@ -57,6 +57,10 @@ left_data = data(data(:, 1)==771, :);
 left_start_positions = left_data(:, 2);
 left_stop_positions = left_start_positions +  left_data(:, 3) - 1;
 
+right_data = data(data(:, 1)==773, :);
+right_start_positions = right_data(:, 2);
+right_stop_positions = right_start_positions +  right_data(:, 3) - 1;
+
 sample_no = left_start_positions(1);
 load channel_location_16_10-20_mi.mat
 figure
@@ -68,10 +72,14 @@ topoplot(car_beta(sample_no, :), chanlocs16);
 % use lap matrix and matrix multiplication
 load laplacian_16_10-20_mi.mat
 
-lap_mu=data_mu(left_start_positions:...
+lap_mu=s(left_start_positions:...
     left_stop_positions,:)*lap;
-lap_beta=data_beta(left_start_positions:...
+lap_beta=s(left_start_positions:...
     left_stop_positions,:)*lap;
+right_lap_mu=s(right_start_positions:...
+    right_stop_positions,:)*lap;
+right_lap_beta=s(right_start_positions:...
+    right_stop_positions,:)*lap;
 figure
 topoplot(lap_beta(2,:),chanlocs16);
 figure
@@ -80,7 +88,12 @@ topoplot(lap_mu(2,:),chanlocs16);
 % psd to extract power of the signal for each frequency
 % pwelch
 % should behave according to power law (1/F)
-pwelch(s(:, 1), 256, 256/2, [], 512); % do it only 
+[pxx_left, f] = pwelch(lap_mu(:, 8:12), 256, 256/2, [8 9 10 11 12], 512); % do it only 
+% figure
+% pwelch(lap_beta(:, 8:12), 256, 256/2, [], 512); 
+[pxx_right, f] = pwelch(right_lap_mu(:, 8:12), 256, 256/2, [8 9 10 11 12], 512); % do it only 
+% figure
+% pwelch(right_lap_beta(:, 8:12), 256, 256/2, [], 512);
 
 % online, pwelch for each window (1 second long) -> buffer -> if full -> pwelch 62.5ms 16Hz
 % power and log on filtered signal
