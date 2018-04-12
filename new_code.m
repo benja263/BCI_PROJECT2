@@ -38,8 +38,10 @@ filenames = ['anonymous.20170613.161402.offline.mi.mi_bhbf.gdf';...
 [s1, h1, s786, h786, s781, h781, s_left, h_left, s_right, h_right] = ...
     event_separation(s, h);
 
-% read the tasks
-[s_left, s_right] = do_tasks(tasks, s_left, s_right, sample_rate, freq, window_size);
+% do the tasks on new data
+new_s_left = s_left;
+new_s_right = s_right;
+[new_s_left, new_s_right] = do_tasks(tasks, new_s_left, new_s_right, sample_rate, freq, window_size);
 
 % functions ---------------------------------------------------------------
 
@@ -95,15 +97,17 @@ function [s_separated, h_separated] = get_event(s, h, event_nb)
     
 end
 
-function [s_left, s_right, pxx, f] = do_tasks(tasks, s_left, s_right, sample_rate, freq, window_size)
+function [new_s_left, new_s_right, pxx, f] = do_tasks(tasks, s_left, s_right, sample_rate, freq, window_size)
 
     % get the laplacian matrix
-    lap = load('laplacian_16_10-20_mi.mat');
+    load('laplacian_16_10-20_mi.mat');
 
     % get the channel locations
-    chanlocs16 = load('channel_location_16_10-20_mi.mat');
+    load('channel_location_16_10-20_mi.mat');
 
     memory = 0;
+    new_s_left = s_left;
+    new_s_right = s_right;
 
     for i = 1 : length(tasks)
 
@@ -112,7 +116,7 @@ function [s_left, s_right, pxx, f] = do_tasks(tasks, s_left, s_right, sample_rat
 
             % save the previous task if there was one
             if ( memory ~= 0 )
-                [s_left, s_right] = save_task(memory, s_tasks, s_left, s_right);
+                [new_s_left, new_s_right] = save_task(memory, s_tasks, new_s_left, new_s_right);
             end
 
             memory = 1;
@@ -123,9 +127,9 @@ function [s_left, s_right, pxx, f] = do_tasks(tasks, s_left, s_right, sample_rat
 
             % save the previous task if there was one
             if ( memory ~= 0 )
-                [s_left, s_right] = save_task(memory, s_tasks, s_left, s_right);
+                [new_s_left, new_s_right] = save_task(memory, s_tasks, new_s_left, new_s_right);
             end
-
+            
             memory = 2;
             s_tasks = s_right; 
 
@@ -188,7 +192,7 @@ function [s_left, s_right, pxx, f] = do_tasks(tasks, s_left, s_right, sample_rat
         end
     end
     
-    [s_left, s_right] = save_task(memory, s_tasks, s_left, s_right);
+    [new_s_left, new_s_right] = save_task(memory, s_tasks, new_s_left, new_s_right);
 
 end
 
@@ -222,12 +226,14 @@ function s_beta = beta(s, sample_rate)
     
 end
 
-function [s_left, s_right] = save_task(memory, s_tasks, s_left, s_right)
+function [new_s_left, new_s_right] = save_task(memory, s_tasks, s_left, s_right)
     if ( memory == 1 )
-        s_left = s_tasks;
+        new_s_left = s_tasks;
+        new_s_right = s_right;
     else
         if ( memory == 2 )
-            s_right = s_tasks;
+            new_s_right = s_tasks;
+            new_s_left = s_left;
         end
     end
 end
