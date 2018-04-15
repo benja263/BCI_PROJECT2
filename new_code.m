@@ -10,7 +10,7 @@
 % 7: PSD
 % 8: moving average
 % example: tasks = [1; 3; 5; 2; 3; 6]
-tasks = [1; 3; 5; 2; 3; 6];
+tasks = [1; 3; 7; 2; 3; 7];
 
 % check that the tasks entered are OK
 if ( ( max(tasks) > 8 ) || (min(tasks) < 1 ) )
@@ -68,33 +68,39 @@ function [s1, h1, s786, h786, s781, h781, s_left, h_left, s_right, h_right] ...
     = event_separation(s, h)
 
     % create a vector with the event numbers:
-    % 1:
-    % 786:
-    % 781:
-    % 771: left/ both feet
-    % 773: right/ both hands
+    % 1: initialization
+    % 786: fixation
+    % 781: continuous feedback
+    % 771: cue left/ both feet
+    % 773: cue right/ both hands
     event_nb = [1, 786, 781, 771, 773];
     
-    [s1, h1]           = get_event(s, h, event_nb(1));
-    [s786, h786]       = get_event(s, h, event_nb(2));
-    [s781, h781]       = get_event(s, h, event_nb(3));
-    [s_left, h_left]   = get_event(s, h, event_nb(4));
-    [s_right, h_right] = get_event(s, h, event_nb(5));
+    [s1, h1]           = get_event(s, h, [event_nb(1),]);
+    [s786, h786]       = get_event(s, h, [event_nb(2),]);
+    [s781, h781]       = get_event(s, h, [event_nb(3),]);
+    [s_left, h_left]   = get_event(s, h, [event_nb(4), event_nb(3)]);
+    [s_right, h_right] = get_event(s, h, [event_nb(5), event_nb(3)]);
 
 end
 
 function [s_separated, h_separated] = get_event(s, h, event_nb)
 
     % get the infos in h of hte wanted event
-    h_separated = h(h(:, 1)==event_nb, :);
+    idx = find(h(:, 1)==event_nb(1));
+    if length(event_nb) == 2 && event_nb(2) == 781
+       idx = sort(vertcat(idx, idx +1)); 
+    end
+    h_separated = h(idx, :);
     
     % get the positions of the wanted event
     start_pos = h_separated(:, 2);
     stop_pos = start_pos + h_separated(:, 3) - 1;
     
+    s_separated = [];
     % get the wanted data
-    s_separated = s(start_pos : stop_pos, :);
-    
+    for i = 1 : length(start_pos)
+        s_separated = [s_separated;  s(start_pos(i) : stop_pos(i), :)];
+    end    
 end
 
 function [new_s_left, new_s_right, pxx, f] = do_tasks(tasks, s_left, s_right, sample_rate, freq, window_size)
@@ -175,7 +181,7 @@ function [new_s_left, new_s_right, pxx, f] = do_tasks(tasks, s_left, s_right, sa
 
         % get PSD
         if ( tasks(i) == 7 )
-            [pxx, f] = get_psd(s_tasks, freq);
+            [pxx, w, f] = get_psd(s_tasks, freq, sample_rate);
             
             figure
             plot(f, pxx)
@@ -238,8 +244,23 @@ function [new_s_left, new_s_right] = save_task(memory, s_tasks, s_left, s_right)
     end
 end
 
-function [pxx, f] = get_psd(s, freq)
-    [pxx, f] = pwelch(s(:, 8:12), 256, 256/2, freq, 512); 
+function [pxx, w, f] = get_psd(s, freq, sample_rate)
+    shift = sample_rate * (1 - 0.0625);
+    chunksize = sample_rate;
+    
+    s_w = zeros(floor(size(s, 1)/ shift), sample_rate, 16);
+    for c = 1 : size(s, 2)
+        cur_channel = s(:, c);
+        windows_cur_channel = cur_channel(bsxfun(@plus,(1:chunksize),(0:shift:length(cur_channel)-chunksize)'));
+        s_w(:, :, c) = windows_cur_channel;
+    end
+    
+    pxx = zeros(size(s_w, 1), length(freq), length(1:16));
+    for w = 1 : size(s_w, 1)
+        pxx(w, :, :) = pwelch(squeeze(s_w(w, :, :)), 256, 256/2, freq, sample_rate); 
+    end 
+    w = shift * (0 : size(s, 1)/ shift) + 1;
+    f = freq;
 end
 
 function s_movavg = moving_average(s, window_size)
