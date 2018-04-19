@@ -10,7 +10,7 @@
 % 7: PSD
 % 8: moving average
 % example: tasks = [1; 3; 5; 2; 3; 6]
-tasks = [1; 3; 7; 2; 3; 7];
+tasks = [1; 3; 7;];
 
 % check that the tasks entered are OK
 if ( ( max(tasks) > 8 ) || (min(tasks) < 1 ) )
@@ -27,21 +27,49 @@ window_size = 5;
 addpath(genpath('./biosig')) %adds folder recursively
 addpath(genpath('./eeglab_current')) %adds folder recursively
 
-filenames = ['anonymous.20170613.161402.offline.mi.mi_bhbf.gdf';...
-    'anonymous.20170613.162331.offline.mi.mi_bhbf.gdf'; ...
-    'anonymous.20170613.162934.offline.mi.mi_bhbf.gdf'];
+filenames = ['anonymous.20170613.162331.offline.mi.mi_bhbf.gdf'];
 
 % get the data ready
 [s, h, sample_rate] = get_data(filenames);
 
-% separate the data of each event
-[s1, h1, s786, h786, s781, h781, s_left, h_left, s_right, h_right] = ...
-    event_separation(s, h);
+
 
 % do the tasks on new data
-new_s_left = s_left;
-new_s_right = s_right;
-[new_s_left, new_s_right] = do_tasks(tasks, new_s_left, new_s_right, sample_rate, freq, window_size);
+new_s_left = s;
+new_s_right = s;
+[psd_car,~] = do_tasks(tasks, new_s_left, new_s_right, sample_rate, freq, window_size);
+tasks = [1;4;7];
+[psd_lap,w_indexes] = do_tasks(tasks, new_s_left, new_s_right, sample_rate, freq, window_size);
+
+% separate the data of each event
+labels = ...
+    event_separation(psd_car, h);
+
+psd_name = 'psd_data.mat';
+if  exist('psd_data.mat','file')
+    load('psd_data.mat');
+    psd_file{end+1,1} = filenames;
+    psd_file{end+1,2} = psd_car;
+    psd_file{end+1,3} = psd_lap;
+    psd_file{end+1,4} = labels;
+    psd_file{end+1,5} = w_indexes;
+    save(psd_name,'psd','psd_file','-append')
+
+else
+    psd_file = cell(1,4);
+    psd_file{1,1} = 'File Name';
+    psd_file{1,2} = 'PSD_Data_Car';
+    psd_file{1,3} = 'PSD_Data_Lap';
+    psd_file{1,4} = 'Event Labels';
+    psd_file{1,5} = 'Window Indexes';
+    psd_file{2,1} = filenames;
+    psd_file{2,2} = psd_car;
+    psd_file{2,3} = psd_lap;
+    psd_file{2,4} = labels;
+    psd_file{2,5} = w_indexes;
+    save(psd_name,'psd_file')
+end
+
 
 % functions ---------------------------------------------------------------
 
@@ -64,8 +92,7 @@ function [s, h, sample_rate] = get_data(filenames)
     
 end
 
-function [s1, h1, s786, h786, s781, h781, s_left, h_left, s_right, h_right] ...
-    = event_separation(s, h)
+function labels = event_separation(psd, h)
 
     % create a vector with the event numbers:
     % 1: initialization
@@ -74,17 +101,17 @@ function [s1, h1, s786, h786, s781, h781, s_left, h_left, s_right, h_right] ...
     % 771: cue left/ both feet
     % 773: cue right/ both hands
     event_nb = [1, 786, 781, 771, 773];
-    
-    [s1, h1]           = get_event(s, h, [event_nb(1),]);
-    [s786, h786]       = get_event(s, h, [event_nb(2),]);
-    [s781, h781]       = get_event(s, h, [event_nb(3),]);
-    [s_left, h_left]   = get_event(s, h, [event_nb(4), event_nb(3)]);
-    [s_right, h_right] = get_event(s, h, [event_nb(5), event_nb(3)]);
+    labels = zeros(size(psd,1),1);
+    labels = get_event(h, [event_nb(4), event_nb(3)],labels);
+    labels = get_event(h, [event_nb(5), event_nb(3)],labels);
+    labels = get_event(h, event_nb(1),labels);
+    labels = get_event( h, event_nb(2),labels);
 
 end
 
-function [s_separated, h_separated] = get_event(s, h, event_nb)
-
+function labels = get_event( h, event_nb,labels)
+    shift = 32;
+    
     % get the infos in h of hte wanted event
     idx = find(h(:, 1)==event_nb(1));
     if length(event_nb) == 2 && event_nb(2) == 781
@@ -96,14 +123,16 @@ function [s_separated, h_separated] = get_event(s, h, event_nb)
     start_pos = h_separated(:, 2);
     stop_pos = start_pos + h_separated(:, 3) - 1;
     
-    s_separated = [];
-    % get the wanted data
-    for i = 1 : length(start_pos)
-        s_separated = [s_separated;  s(start_pos(i) : stop_pos(i), :)];
-    end    
+    w_start_pos = floor(start_pos/shift) + 1;
+    w_stop_pos = floor(stop_pos/shift) + 1;
+    
+    for i=1:length(w_start_pos)
+        labels(w_start_pos(i):w_stop_pos(i)) = event_nb(1);
+    end
+       
 end
 
-function [new_s_left, new_s_right, pxx, f] = do_tasks(tasks, s_left, s_right, sample_rate, freq, window_size)
+function [ pxx, w] = do_tasks(tasks, s_left, s_right, sample_rate, freq, window_size)
 
     % get the laplacian matrix
     load('laplacian_16_10-20_mi.mat');
@@ -182,11 +211,10 @@ function [new_s_left, new_s_right, pxx, f] = do_tasks(tasks, s_left, s_right, sa
         % get PSD
         if ( tasks(i) == 7 )
             [pxx, w, f] = get_psd(s_tasks, freq, sample_rate);
-            
-            figure
-            plot(f, pxx)
-            title('PSD')
-            legend('channel 8', 'channel 9', 'channel 10', 'channel 11', 'channel 12')
+            %figure
+            %plot(f, pxx)
+            %title('PSD')
+            %legend('channel 8', 'channel 9', 'channel 10', 'channel 11', 'channel 12')
         end
 
         % get moving average
@@ -245,19 +273,23 @@ function [new_s_left, new_s_right] = save_task(memory, s_tasks, s_left, s_right)
 end
 
 function [pxx, w, f] = get_psd(s, freq, sample_rate)
-    shift = sample_rate * (1 - 0.0625);
+    shift = sample_rate * (0.0625);
     chunksize = sample_rate;
     
-    s_w = zeros(floor(size(s, 1)/ shift), sample_rate, 16);
+    s_w = zeros(floor((size(s, 1) / shift)), sample_rate, 16);
     for c = 1 : size(s, 2)
         cur_channel = s(:, c);
-        windows_cur_channel = cur_channel(bsxfun(@plus,(1:chunksize),(0:shift:length(cur_channel)-chunksize)'));
+        %windows_cur_channel = cur_channel(bsxfun(@plus,(1:chunksize)...
+         %   ,(0:shift:length(cur_channel)-chunksize)'));
+         windows_cur_channel = buffer(cur_channel,chunksize,...
+             chunksize-shift)';
         s_w(:, :, c) = windows_cur_channel;
     end
     
     pxx = zeros(size(s_w, 1), length(freq), length(1:16));
     for w = 1 : size(s_w, 1)
-        pxx(w, :, :) = pwelch(squeeze(s_w(w, :, :)), 256, 256/2, freq, sample_rate); 
+        pxx(w, :, :) = pwelch(squeeze(s_w(w, :, :)),...
+            256, 256/2, freq, sample_rate); 
     end 
     w = shift * (0 : size(s, 1)/ shift) + 1;
     f = freq;
