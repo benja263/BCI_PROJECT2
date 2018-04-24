@@ -1,2 +1,5 @@
 .DS_Store
 *.asv
+
+# to be taken from gDrive
+psd_data.mat
