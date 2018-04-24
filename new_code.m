@@ -1,4 +1,4 @@
-% enter the sequence of tasks: --------------------------------------------
+function new_code(filename)% enter the sequence of tasks: --------------------------------------------
 
 % The different tasks are:
 % 1: take data from both feet (left)
@@ -18,7 +18,7 @@ if ( ( max(tasks) > 8 ) || (min(tasks) < 1 ) )
 end
 
 % frequencies of interest for PSD
-freq = [8, 9, 10, 11, 12];
+freq = [4:2:48];
 
 % window size for moving average
 window_size = 5;
@@ -27,7 +27,7 @@ window_size = 5;
 addpath(genpath('./biosig')) %adds folder recursively
 addpath(genpath('./eeglab_current')) %adds folder recursively
 
-filenames = ['anonymous.20170613.162331.offline.mi.mi_bhbf.gdf'];
+filenames = filename;
 
 % get the data ready
 [s, h, sample_rate] = get_data(filenames);
@@ -48,12 +48,28 @@ labels = ...
 psd_name = 'psd_data.mat';
 if  exist('psd_data.mat','file')
     load('psd_data.mat');
-    psd_file{end+1,1} = filenames;
-    psd_file{end+1,2} = psd_car;
-    psd_file{end+1,3} = psd_lap;
-    psd_file{end+1,4} = labels;
-    psd_file{end+1,5} = w_indexes;
-    save(psd_name,'psd','psd_file','-append')
+    names = psd_file(:,1);
+    name_exists = false;
+    for name=1:length(names)
+       if strcmp(filenames,names{name})
+          psd_file{name,1} = filenames;
+          psd_file{name,2} = psd_car;
+          psd_file{name,3} = psd_lap;
+          psd_file{name,4} = labels;
+          psd_file{name,5} = w_indexes;
+          save(psd_name,'psd_file','-append')
+          name_exists = true;
+          break
+       end
+    end
+    if ~name_exists
+        psd_file{end+1,1} = filenames;
+        psd_file{end,2} = psd_car;
+        psd_file{end,3} = psd_lap;
+        psd_file{end,4} = labels;
+        psd_file{end,5} = w_indexes;
+        save(psd_name,'psd_file','-append')
+    end
 
 else
     psd_file = cell(1,4);
@@ -69,7 +85,7 @@ else
     psd_file{2,5} = w_indexes;
     save(psd_name,'psd_file')
 end
-
+end
 
 % functions ---------------------------------------------------------------
 
@@ -174,55 +190,39 @@ function [ pxx, w] = do_tasks(tasks, s_left, s_right, sample_rate, freq, window_
         if ( tasks(i) == 3 )
             s_tasks = car(s_tasks);
 
-            % topoplot
-            figure
-            topoplot(s_tasks(2,:),chanlocs16);
+
         end
 
         % laplacian spatial filtering
         if ( tasks(i) == 4 )
             s_tasks = laplacian(s_tasks, lap);
-            
-            %topoplot
-            figure
-            topoplot(s_tasks(2,:),chanlocs16);
+
+ 
         end
 
         % mu frequency filtering
         if ( tasks(i) == 5 )
             s_tasks = mu(s_tasks, sample_rate);
-            
-            figure
-            plot(s_tasks(:, 8:12))
-            title('mu filter')
-            legend('channel 8', 'channel 9', 'channel 10', 'channel 11', 'channel 12')    
+              
         end
 
         % beta frequency filtering
         if ( tasks(i) == 6 )
             s_tasks = beta(s_tasks, sample_rate);
             
-            figure
-            plot(s_tasks(:, 8:12))
-            title('beta filter')
-            legend('channel 8', 'channel 9', 'channel 10', 'channel 11', 'channel 12')            
+            
         end
 
         % get PSD
         if ( tasks(i) == 7 )
             [pxx, w, f] = get_psd(s_tasks, freq, sample_rate);
-            %figure
-            %plot(f, pxx)
-            %title('PSD')
-            %legend('channel 8', 'channel 9', 'channel 10', 'channel 11', 'channel 12')
+
         end
 
         % get moving average
         if ( tasks(i) == 8 )
             s_tasks = moving_average(s_tasks, window_size);
-            
-            figure
-            plot(s_tasks(:, 8:12))
+
         end
     end
     
