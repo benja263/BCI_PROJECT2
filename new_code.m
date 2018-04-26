@@ -1,4 +1,4 @@
-function added = new_code(filename,filepath,psd_file)% enter the sequence of tasks: --------------------------------------------
+function [psd_file ,added] = new_code(filename,filepath,psd_file)% enter the sequence of tasks: --------------------------------------------
 
 % The different tasks are:
 % 1: take data from both feet (left)
@@ -58,14 +58,14 @@ labels = ...
     event_separation(psd_car, h);
 
 psd_name = 'psd_data.mat';
-if  exist('psd_data.mat','file')
+if  nargin == 3
     psd_file{end+1,1} = filename;
     psd_file{end,2} = filepath;
     psd_file{end,3} = psd_car;
     psd_file{end,4} = psd_lap;
     psd_file{end,5} = labels;
     psd_file{end,6} = w_indexes;
-    save(psd_name,'psd_file','-append')
+    save(psd_name,'psd_file')
 else
     psd_file = cell(1,4);
     psd_file{1,1} = 'File Name';

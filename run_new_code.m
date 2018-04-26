@@ -31,10 +31,10 @@ for i=1:length(filenames)
     filepath = filenames{i,2};
     for j=1:length(files)   
         filename = files{j};
-        if exists
-            added = new_code(filename,filepath,psd_file);
+        if exists 
+            [psd_file,added] = new_code(filename,filepath,psd_file);
         else
-            new_code(filename,filepath)
+            [psd_file,~] =  new_code(filename,filepath);
         end
         if added
             disp('Added file')
@@ -71,10 +71,10 @@ for i=1:length(filenames)
     filepath = filenames{i,2};
     for j=1:length(files) 
         filename = files{j};  
-        if exists
-            added = new_code(filename,filepath,psd_file);
+        if exists 
+            [psd_file,added] = new_code(filename,filepath,psd_file);
         else
-            new_code(filename,filepath)
+            [psd_file,~] =  new_code(filename,filepath);
         end
         if added
             disp('Added file')
@@ -86,4 +86,36 @@ for i=1:length(filenames)
         end
     end
 end
-disp('done')
+disp('Done')
+%% annonymous data
+disp('Loading annonymous data')
+filepath = './';
+annon_files = dir();
+annon_files([annon_files.isdir]) = [];
+annon_names = extractfield(annon_files,'name');
+indexes = zeros(length(annon_names),1);
+for i=1:length(annon_names)
+    name = annon_names{i};
+    if strcmp(name(end-2:end),'gdf')
+        indexes(i) = i;
+    end
+end
+indexes = indexes(indexes ~= 0);
+filenames = annon_names(indexes);
+for j=1:length(filenames) 
+    filename = filenames{j};  
+    if exists 
+        [psd_file, added] = new_code(filename,filepath,psd_file);
+    else
+        [psd_file,~] =  new_code(filename,filepath);
+    end
+    if added
+        disp('Added file')
+        disp(filename)
+    else
+        disp('File already exists')
+        disp(filename)
+
+    end
+end
+disp('Done')
