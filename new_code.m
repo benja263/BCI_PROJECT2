@@ -1,4 +1,4 @@
-function new_code(filename)% enter the sequence of tasks: --------------------------------------------
+function added = new_code(filename,filepath,psd_file)% enter the sequence of tasks: --------------------------------------------
 
 % The different tasks are:
 % 1: take data from both feet (left)
@@ -27,8 +27,20 @@ window_size = 5;
 addpath(genpath('./biosig')) %adds folder recursively
 addpath(genpath('./eeglab_current')) %adds folder recursively
 
-filenames = filename;
-
+filenames = strcat(filepath,filename);
+if  nargin == 3
+    names = psd_file(:,1);
+    name_exists = false;
+    for name=1:length(names)
+       if strcmp(filename,names{name})
+            name_exists = true;
+            added = false;
+            return
+       else
+           added = true;
+       end
+    end
+end
 % get the data ready
 [s, h, sample_rate] = get_data(filenames);
 
@@ -47,42 +59,27 @@ labels = ...
 
 psd_name = 'psd_data.mat';
 if  exist('psd_data.mat','file')
-    load('psd_data.mat');
-    names = psd_file(:,1);
-    name_exists = false;
-    for name=1:length(names)
-       if strcmp(filenames,names{name})
-          psd_file{name,1} = filenames;
-          psd_file{name,2} = psd_car;
-          psd_file{name,3} = psd_lap;
-          psd_file{name,4} = labels;
-          psd_file{name,5} = w_indexes;
-          save(psd_name,'psd_file','-append')
-          name_exists = true;
-          break
-       end
-    end
-    if ~name_exists
-        psd_file{end+1,1} = filenames;
-        psd_file{end,2} = psd_car;
-        psd_file{end,3} = psd_lap;
-        psd_file{end,4} = labels;
-        psd_file{end,5} = w_indexes;
-        save(psd_name,'psd_file','-append')
-    end
-
+    psd_file{end+1,1} = filename;
+    psd_file{end,2} = filepath;
+    psd_file{end,3} = psd_car;
+    psd_file{end,4} = psd_lap;
+    psd_file{end,5} = labels;
+    psd_file{end,6} = w_indexes;
+    save(psd_name,'psd_file','-append')
 else
     psd_file = cell(1,4);
     psd_file{1,1} = 'File Name';
-    psd_file{1,2} = 'PSD_Data_Car';
-    psd_file{1,3} = 'PSD_Data_Lap';
-    psd_file{1,4} = 'Event Labels';
-    psd_file{1,5} = 'Window Indexes';
-    psd_file{2,1} = filenames;
-    psd_file{2,2} = psd_car;
-    psd_file{2,3} = psd_lap;
-    psd_file{2,4} = labels;
-    psd_file{2,5} = w_indexes;
+    psd_file{1,2} = 'File Path';
+    psd_file{1,3} = 'PSD_Data_Car';
+    psd_file{1,4} = 'PSD_Data_Lap';
+    psd_file{1,5} = 'Event Labels';
+    psd_file{1,6} = 'Window Indexes';
+    psd_file{2,1} = filename;
+    psd_file{2,2} = filepath;
+    psd_file{2,3} = psd_car;
+    psd_file{2,4} = psd_lap;
+    psd_file{2,5} = labels;
+    psd_file{2,6} = w_indexes;
     save(psd_name,'psd_file')
 end
 end
