@@ -44,16 +44,16 @@ psd_car_fisher=(abs(psd_car_feet_mean-psd_car_hands_mean))./(sqrt(psd_car_feet_s
 figure
 
 subplot(2,1,1)
-imagesc(psd_car_fisher)
+imagesc(psd_car_fisher') % we want frequencies in X
 title('Feature Discriminability using CAR filtering')
-xlabel('Channels')
-ylabel('Frequences')
+ylabel('Channels')
+xlabel('Frequences [Hz]')
 
 subplot(2,1,2)
-imagesc(psd_lap_fisher)
+imagesc(psd_lap_fisher')
 title('Feature Discriminability using Laplacian filtering')
-xlabel('Channels')
-ylabel('Frequences')
+ylabel('Channels')
+xlabel('Frequences[Hz]')
 
 
 
@@ -102,7 +102,87 @@ topoplot(squeeze(squeeze(mean( mean(psd_lap(events==773,...
     :), 1), 2 ) )),chanlocs16)
 title('\beta Frequency of Laplacian filtered Hands ')
 
+%% plotting individuals offline  features
+names = {'./benjamin/offline/','./emily/offline/','./kriton/offline/'...
+    './juraj/offline/','./'};
+type = 4; % car is 3, laplacian is 4
+
+for i = 1:length(names)
+    if i == 3
+        size = [2,1];
+    else
+        size = [2,2];
+    end
+    plotFrequencyMap(names{i},size,psd_file,type)
+end
+
+%% plotting individuals online  features
+names = {'./benjamin/online/','./emily/online/','./kriton/online/'...
+    './juraj/online/'};
+type = 4; % car is 3, laplacian is 4
+for i = 1:length(names)
+    if i == 1
+        size = [4,2];
+    elseif i == 3
+        size = [3,2];
+    else
+        size = [2,2];
+    end
+    plotFrequencyMap(names{i},size,psd_file,type)
+end
 
 
+function plotFrequencyMap(name,size,psd_file,type)
+    % type is laplacian or CAR filtering
+    % 3 for car, 4 for laplacian
+    
+    ind = 1;
+    figure('color','w');
+    if type == 3
+        text = 'CAR';
+    elseif type == 4
+        text = 'Laplacian';
+    else
+        disp('Error Type can only be 3 for CAR or 4 for Laplacian')
+        return
+    end
+    
+    if length(name) > 3
+        user = strsplit(name,'/');
+        user = [user{2},' ', user{3}];
+    else
+        user = 'annonymous';
+    end
 
+    for i=1:length(psd_file)
+        if strcmp(name,psd_file{i,2})
+            subplot(size(1),size(2),ind)
+            imagesc(calculateFisher(type,psd_file,i)')
+            ylabel('Channels')
+            xlabel('Frequencies [Hz]')
+            ind = ind + 1;
+            colorbar
+            set(gca,'FontSize',16)
+            set(gca,'XTick', 2:2:48)
+            set(gca,'YTick',2:2:16)
+        end
+    end
+    string = [user, ' feature discriminability using ', text, ' filtering'];
+    h = suplabel(string,'t');
+    set(h,'FontSize',16)
 
+    
+
+end
+
+function psd = calculateFisher(type,psd_file,index)
+    psd = psd_file{index,type};
+    events = psd_file{index,5};
+    
+    psd_left_std=squeeze(std(psd(events ==771, :, :)));
+    psd_left_mean = squeeze(mean(psd(events ==771, :, :)));
+    psd_right_std = squeeze(std(psd(events ==773, :, :)));
+    psd_right_mean = squeeze(mean(psd(events ==773, :, :)));
+    psd =(abs(psd_left_mean-psd_right_mean))...
+        ./(sqrt(psd_left_std.^2+psd_right_std.^2));
+end
