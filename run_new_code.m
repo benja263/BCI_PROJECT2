@@ -34,7 +34,7 @@ for i=1:length(filenames)
         if exists 
             [psd_file,added] = new_code(filename,filepath,psd_file);
         else
-            [psd_file,~] =  new_code(filename,filepath);
+            [psd_file,added] =  new_code(filename,filepath);
         end
         if added
             disp('Added file')
@@ -74,8 +74,9 @@ for i=1:length(filenames)
         if exists 
             [psd_file,added] = new_code(filename,filepath,psd_file);
         else
-            [psd_file,~] =  new_code(filename,filepath);
+            [psd_file,added] =  new_code(filename,filepath);
         end
+        added
         if added
             disp('Added file')
             disp(filename)

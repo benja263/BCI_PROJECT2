@@ -30,10 +30,8 @@ addpath(genpath('./eeglab_current')) %adds folder recursively
 filenames = strcat(filepath,filename);
 if  nargin == 3
     names = psd_file(:,1);
-    name_exists = false;
     for name=1:length(names)
        if strcmp(filename,names{name})
-            name_exists = true;
             added = false;
             return
        else
@@ -51,6 +49,8 @@ new_s_left = s;
 new_s_right = s;
 [psd_car,~] = do_tasks(tasks, new_s_left, new_s_right, sample_rate, freq, window_size);
 tasks = [1;4;7];
+new_s_left = s;
+new_s_right = s;
 [psd_lap,w_indexes] = do_tasks(tasks, new_s_left, new_s_right, sample_rate, freq, window_size);
 
 % separate the data of each event
@@ -81,6 +81,7 @@ else
     psd_file{2,5} = labels;
     psd_file{2,6} = w_indexes;
     save(psd_name,'psd_file')
+    added = true;
 end
 end
 
@@ -145,7 +146,7 @@ function labels = get_event( h, event_nb,labels)
        
 end
 
-function [ pxx, w] = do_tasks(tasks, s_left, s_right, sample_rate, freq, window_size)
+function [pxx, w] = do_tasks(tasks, s_left, s_right, sample_rate, freq, window_size)
 
     % get the laplacian matrix
     load('laplacian_16_10-20_mi.mat');
