@@ -9,6 +9,7 @@ load channel_location_16_10-20_mi.mat
 %% Preprocessing
 
 index=29; 
+
 Freq = 4:2:48;
 Beta_frequency = 12:2:30;
 [~,Beta_frequency] = intersect(Freq,Beta_frequency);
