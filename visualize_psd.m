@@ -118,19 +118,19 @@ function plotFrequencyMap(name,size,psd_file,type)
 
     for i=1:length(psd_file)
         if strcmp(name,psd_file{i,2})
-            subplot(size(1),size(2),ind)
+            subplot_tight(size(1),size(2),ind,[0.1,0.1])
             heat_map = calculateFisher(type,psd_file,i)';
             heat_map = heat_map./max(heat_map(:));
             imagesc(heat_map);
-            title(psd_file{i,1})
-            ylabel('Channels')
-            xlabel('Frequencies [Hz]')
+            title(psd_file{i,1});
+            ylabel('Channels');
+            xlabel('Frequencies [Hz]');
             xticklabels(4:2:48);
             ind = ind + 1;
-            colorbar
-            set(gca,'FontSize',16)
-            set(gca,'XTick', 0:2:44)
-            set(gca,'YTick',2:2:16)
+            colorbar;
+            set(gca,'FontSize',16);
+            set(gca,'XTick', 0:2:44);
+            set(gca,'YTick',2:2:16);
         end
     end
     string = [user, ' feature discriminability using ', text, ' filtering'];
