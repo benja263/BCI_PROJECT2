@@ -129,7 +129,7 @@ function labels = get_event( h, event_nb,labels)
     % get the infos in h of hte wanted event
     idx = find(h(:, 1)==event_nb(1));
     if length(event_nb) == 2 && event_nb(2) == 781
-       idx = sort(vertcat(idx, idx +1)); 
+       idx = idx+1;
     end
     h_separated = h(idx, :);
     
