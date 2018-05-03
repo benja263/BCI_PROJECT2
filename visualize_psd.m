@@ -8,17 +8,20 @@ load channel_location_16_10-20_mi.mat
 
 %% Preprocessing
 
-index=35; 
+index=33; 
 
 Freq = 4:2:48;
 Beta_frequency = 12:2:30;
 [~,Beta_frequency] = intersect(Freq,Beta_frequency);
-Mu_frequency = 8:2:12;
+Mu_frequency = 10:2:14;
 [~,Mu_frequency] = intersect(Freq,Mu_frequency);
 %Mu_frequency = 1:1:length(Freq);
-psd_lap = psd_file{index,4};
-psd_car = psd_file{index,3};
+anonymous=concatenate(psd_file{33,4},psd_file{34,4},psd_file{35,4});
+lpsd_lap=log10(mean(anonymous));
+%lpsd_lap = log10(psd_file{index,4});
+lpsd_car = log10(psd_file{index,3}+1);
 events = psd_file{index,5};
+
 
 %% Topoplots
 
@@ -32,59 +35,81 @@ else
 end
 set(fig,'Name',user)
 subplot(2,2,1)
-car_feet = squeeze(squeeze(mean( mean(log(psd_car(events==771,...
+baseline=squeeze(squeeze(mean(mean(lpsd_car(events==786,...
     Mu_frequency,...
-    :)), 1),2 ) ));
-topoplot(car_feet,chanlocs16,'maplimits','maxmin');
+    :), 1), 2 )));
+car_feet = squeeze(squeeze(mean(mean(lpsd_car(events==771,...
+    Mu_frequency,...
+    :), 1),2 ) ));
+car_hands = squeeze(squeeze(mean( mean(lpsd_car(events==773,...
+    Mu_frequency,...
+    :), 1), 2 ) ));
+ERDhands=(car_hands-baseline)./(baseline);
+ERDfeet=(car_feet-baseline)./(baseline);
+
+topoplot(ERDfeet,chanlocs16,'maplimits','maxmin');
 colorbar
 title('\mu Frequency of Car filtered feet ')
 subplot(2,2,2)
-car_hands = squeeze(squeeze(mean( mean(log(psd_car(events==773,...
-    Mu_frequency,...
-    :)), 1), 2 ) ));
-topoplot(car_hands,chanlocs16,'maplimits','maxmin');
+
+topoplot(ERDhands,chanlocs16,'maplimits','maxmin');
 colorbar
 title('\mu Frequency of Car filtered Hands ')
+
+
 subplot(2,2,3)
-lap_feet = squeeze(squeeze(mean( mean(log(psd_lap(events==771,...
+lap_feet = squeeze(squeeze(mean( mean(lpsd_lap(events==771,...
     Mu_frequency,...
-    :)), 1),2 ) ));
-topoplot(lap_feet,chanlocs16,'maplimits','maxmin');
+    :), 1),2 ) ));
+ERDfeetlap=(lap_feet-baseline)./(baseline);
+topoplot(ERDfeetlap,chanlocs16,'maplimits','maxmin');
 colorbar
 title('\mu Frequency of Laplacian filtered feet ')
 subplot(2,2,4)
-lap_hands = squeeze(squeeze(mean( mean(log(psd_lap(events==773,...
+lap_hands = squeeze(squeeze(mean( mean(lpsd_lap(events==773,...
     Mu_frequency,...
-    :)), 1), 2 ) ));
-
-topoplot(lap_hands,chanlocs16,'maplimits','maxmin');
+    :), 1), 2 ) ));
+ERDhandslap=(lap_hands-baseline)./(baseline);
+topoplot(ERDhandslap,chanlocs16,'maplimits','maxmin');
 colorbar
 title('\mu Frequency of Laplacian filtered Hands ')
 
 % beta frequency
 figure('color','w')
 subplot(2,2,1)
-topoplot(squeeze(squeeze(mean( mean(log(psd_car(events==771,...
+car_feet = squeeze(squeeze(mean(mean(lpsd_car(events==771,...
     Beta_frequency,...
-    :)), 1),2 ) )),chanlocs16,'maplimits','maxmin');
+    :), 1),2 ) ));
+car_hands = squeeze(squeeze(mean( mean(lpsd_car(events==773,...
+    Beta_frequency,...
+    :), 1), 2 ) ));
+ERDhands=(car_hands-baseline)./(baseline);
+ERDfeet=(car_feet-baseline)./(baseline);
+
+topoplot(ERDfeet,chanlocs16,'maplimits','maxmin');
 colorbar
 title('\beta Frequency of Car filtered feet ')
 subplot(2,2,2)
-topoplot(squeeze(squeeze(mean( mean(log(psd_car(events==773,...
-    Beta_frequency,...
-    :)), 1), 2 ) )),chanlocs16,'maplimits','maxmin');
+
+topoplot(ERDhands,chanlocs16,'maplimits','maxmin');
 colorbar
 title('\beta Frequency of Car filtered Hands ')
+
+
 subplot(2,2,3)
-topoplot(squeeze(squeeze(mean( mean(log(psd_lap(events==771,...
+lap_feet = squeeze(squeeze(mean( mean(lpsd_lap(events==771,...
     Beta_frequency,...
-    :)), 1),2 ) )),chanlocs16,'maplimits','maxmin');
+    :), 1),2 ) ));
+ERDfeetlap=(lap_feet-baseline)./(baseline);
+topoplot(ERDfeetlap,chanlocs16,'maplimits','maxmin');
 colorbar
 title('\beta Frequency of Laplacian filtered feet ')
 subplot(2,2,4)
-topoplot(squeeze(squeeze(mean( mean(log(psd_lap(events==773,...
+lap_hands = squeeze(squeeze(mean( mean(lpsd_lap(events==773,...
     Beta_frequency,...
-    :)), 1), 2 ) )),chanlocs16,'maplimits','maxmin');
+    :), 1), 2 ) ));
+ERDhandslap=(lap_hands-baseline)./(baseline);
+topoplot(ERDhandslap,chanlocs16,'maplimits','maxmin');
 colorbar
 title('\beta Frequency of Laplacian filtered Hands ')
 %% plotting individuals offline  features
