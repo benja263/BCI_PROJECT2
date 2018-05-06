@@ -12,8 +12,8 @@ for i = 2:size(psd_file,1)
            if strcmp(dates{2},date)
                data{end+1,1} = psd_file{i,3};
                data{end,2} = psd_file{i,4};
-               data{end,3} = psd_file{i,4};
-               data{end,4} = psd_file{i,5};
+               data{end,3} = psd_file{i,5};
+               data{end,4} = psd_file{i,6};
                data{end,5} = names{3};
                data{end,6} = dates{3};
            end
@@ -23,8 +23,8 @@ for i = 2:size(psd_file,1)
         if strcmp('anonymous',dates{i}) 
            data{end+1,1} = psd_file{i,3};
            data{end,2} = psd_file{i,4};
-           data{end,3} = psd_file{i,4};
-           data{end,4} = psd_file{i,5};
+           data{end,3} = psd_file{i,5};
+           data{end,4} = psd_file{i,6};
            data{end,5} = names{3};
            data{end,6} = dates{3};
         end  
