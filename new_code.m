@@ -287,7 +287,7 @@ function [pxx, w, f] = get_psd(s, freq, sample_rate)
     pxx = zeros(size(s_w, 1), length(freq), length(1:16));
     for w = 1 : size(s_w, 1)
         pxx(w, :, :) = pwelch(squeeze(s_w(w, :, :)),...
-            256, 256/2, freq, sample_rate); 
+            128, 128/2, freq, sample_rate); 
     end 
     w = shift * (0 : size(s, 1)/ shift) + 1;
     f = freq;
