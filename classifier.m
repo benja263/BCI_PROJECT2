@@ -2,7 +2,7 @@
 addpath(genpath('./biosig')) %adds folder recursively
 addpath(genpath('./eeglab_current')) %adds folder recursively
 addpath(genpath('./functions')) %adds folder recursively
-%load psd_data.mat
+load psd_data.mat
 %% run
 tic
 name = 'emily';
@@ -36,8 +36,8 @@ n = size(tr_data,1);
 
 Model = fitcdiscr(tr_data,tr_events,'DiscrimType','linear', 'ClassNames',...
     {'773','771'},'Prior','uniform');
-test_windows = data_for_test{2,4};
-test_windows = test_windows(1,:); % i dont know why it is 2 rows and not 1
+test_labels = data_for_test{2,3};
+test_labels = test_labels(1,:); % i dont know why it is 2 rows and not 1
 post_prob = zeros(2,size(te_data,1));
 correct = zeros(1,size(te_data,1));
 for i = 1:size(te_data,1)
