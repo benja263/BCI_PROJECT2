@@ -95,8 +95,15 @@ Beta_frequency = 12:2:30;
 [~,Beta_frequency] = intersect(Freq,Beta_frequency);
 Mu_frequency = 10:2:14;
 [~,Mu_frequency] = intersect(Freq,Mu_frequency);
+<<<<<<< HEAD
 
 lpsd_lap = log10(psd_file{index,4}+1);
+=======
+%Mu_frequency = 1:1:length(Freq);
+anonymous= cat(psd_file{33,4},psd_file{34,4},psd_file{35,4});
+lpsd_lap=log10(mean(anonymous));
+%lpsd_lap = log10(psd_file{index,4});
+>>>>>>> 767960920b9daf737b465146528959784a558534
 lpsd_car = log10(psd_file{index,3}+1);
 events = psd_file{index,5};
 
