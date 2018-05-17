@@ -15,25 +15,31 @@ function [psd_file ,added] = PSD(filename,filepath,psd_file)
     % get the data ready
     freq = 4:2:48;
     [s, h, sample_rate] = get_data(filenames);
-    pxx = get_psd(s, freq, sample_rate);
-    labels =  event_separation(pxx, h);
+    lap_s = lapFiltering(s);
+    lap_pxx = get_psd(lap_s, freq, sample_rate);
+    labels =  event_separation(lap_pxx, h);
+    car_s = car(s);
+    car_pxx = get_psd(car_s, freq, sample_rate);
     psd_name = 'psd_data.mat';
     if  nargin == 3
         psd_file{end+1,1} = filename;
         psd_file{end,2} = filepath;
-        psd_file{end,3} = pxx;
-        psd_file{end,4} = labels;
+        psd_file{end,3} = car_pxx;
+        psd_file{end,4} = lap_pxx;
+        psd_file{end,5} = labels;
         save(psd_name,'psd_file')
     else
         psd_file = cell(1,4);
         psd_file{1,1} = 'File Name';
         psd_file{1,2} = 'File Path';
-        psd_file{1,3} = 'PSD Data';
-        psd_file{1,4} = 'Event Labels';
+        psd_file{1,3} = 'Car PSD Data';
+        psd_file{1,4} = 'Laplacian PSD Data';
+        psd_file{1,5} = 'Event Labels';
         psd_file{2,1} = filename;
         psd_file{2,2} = filepath;
-        psd_file{2,3} = pxx;
-        psd_file{2,4} = labels;
+        psd_file{2,3} = car_pxx;
+        psd_file{2,4} = lap_pxx;
+        psd_file{2,5} = labels;
         save(psd_name,'psd_file')
         added = true;
     end
@@ -119,4 +125,19 @@ function labels = get_event( h, event_nb,labels)
         labels(w_start_pos(i):w_stop_pos(i)) = event_nb(1);
     end
        
+end
+
+function lap_s = lapFiltering(s)
+    load laplacian_16_10-20_mi.mat;
+    lap_s =  s*lap;
+end
+
+function s_car = car(s)
+
+    % get the mean of the data
+    s_mean = mean(s, 2);
+    
+    % subtract the mean from the signal of each electrode
+    s_car = s - repmat(s_mean, 1, size(s, 2));
+    
 end
