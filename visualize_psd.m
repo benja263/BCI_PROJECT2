@@ -12,19 +12,14 @@ load channel_location_16_10-20_mi.mat
 [feetCar,handsCar,baselineCar]=separationCar(psd_file);
 [feetLap,handsLap,baselineLap]=separationLap(psd_file);
 
-% anonymous_BaselineCAR=log10(vertcat(baselineCar{1,2},baselineCar{1,33},baselineCar{1,34},baselineCar{1,35})+1);
-% anonymous_Feet_CAR=log10(vertcat(feetCar{1,2},feetCar{1,33},feetCar{1,34},feetCar{1,35})+1);
-% anonymous_Hands_CAR=log10(vertcat(handsCar{1,2},handsCar{1,33},handsCar{1,34},handsCar{1,35})+1);
-% anonymous_BaselineLAP=log10(vertcat(baselineLap{1,2},baselineLap{1,33},baselineLap{1,34},baselineLap{1,35})+1);
-% anonymous_Feet_LAP=log10(vertcat(feetLap{1,2},feetLap{1,33},feetLap{1,34},feetLap{1,35})+1);
-% anonymous_Hands_LAP=log10(vertcat(handsLap{1,2},handsLap{1,33},handsLap{1,34},handsLap{1,35})+1);
+anonymous_BaselineCAR=log10(vertcat(baselineCar{1,32},baselineCar{1,33},baselineCar{1,34},baselineCar{1,35})+1);
+anonymous_Feet_CAR=log10(vertcat(feetCar{1,32},feetCar{1,33},feetCar{1,34},feetCar{1,35})+1);
+anonymous_Hands_CAR=log10(vertcat(handsCar{1,32},handsCar{1,33},handsCar{1,34},handsCar{1,35})+1);
+anonymous_BaselineLAP=log10(vertcat(baselineLap{1,32},baselineLap{1,33},baselineLap{1,34},baselineLap{1,35})+1);
+anonymous_Feet_LAP=log10(vertcat(feetLap{1,32},feetLap{1,33},feetLap{1,34},feetLap{1,35})+1);
+anonymous_Hands_LAP=log10(vertcat(handsLap{1,32},handsLap{1,33},handsLap{1,34},handsLap{1,35})+1);
 
-anonymous_BaselineCAR=log10(baselineCar{1,36}+1);
-anonymous_Feet_CAR=log10(feetCar{1,36}+1);
-anonymous_Hands_CAR=log10(handsCar{1,36}+1);
-anonymous_BaselineLAP=log10(baselineLap{1,36}+1);
-anonymous_Feet_LAP=log10(feetLap{1,36}+1);
-anonymous_Hands_LAP=log10(handsLap{1,36}+1);
+
 
 Freq = 4:2:48;
 
@@ -95,15 +90,14 @@ Beta_frequency = 12:2:30;
 [~,Beta_frequency] = intersect(Freq,Beta_frequency);
 Mu_frequency = 10:2:14;
 [~,Mu_frequency] = intersect(Freq,Mu_frequency);
-<<<<<<< HEAD
+
 
 lpsd_lap = log10(psd_file{index,4}+1);
-=======
+
 %Mu_frequency = 1:1:length(Freq);
 anonymous= cat(psd_file{33,4},psd_file{34,4},psd_file{35,4});
 lpsd_lap=log10(mean(anonymous));
 %lpsd_lap = log10(psd_file{index,4});
->>>>>>> 767960920b9daf737b465146528959784a558534
 lpsd_car = log10(psd_file{index,3}+1);
 events = psd_file{index,5};
 
