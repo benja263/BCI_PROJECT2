@@ -1,14 +1,29 @@
-function [tr_data, te_data] = split_data(data)
+function [tr_data, te_data] = split_data(data,exception_times)
     tr_data = {'Car PSD Data','Lap PSD Data','Events'}; % traning data
     te_data = {'Car PSD Data','Lap PSD Data','Events'}; % test data
-    tr_ind = zeros(size(data,1));
-    te_ind = zeros(size(data,1));
-    for i = 2:size(data,1)
-       if strcmp(data{i,4},'offline')
-           tr_ind(i) = i;
-       else
-           te_ind(i) = i;
-       end
+    tr_ind = zeros(size(data,1),1);
+    te_ind = zeros(size(data,1),1);
+    if nargin == 1
+        for i = 2:size(data,1)
+           if strcmp(data{i,4},'offline')
+               tr_ind(i) = i;
+           else
+               te_ind(i) = i;
+           end
+        end
+    else
+        for i = 2:size(data,1)
+            for j = 1:length(exception_times)
+               if strcmp(data{i,4},'offline') || strcmp(data{i,5},exception_times{j})
+                   tr_ind(i) = i;
+               else 
+                    te_ind(i) = i;
+               end
+            end
+            if ismember(i,tr_ind) && ismember(i,te_ind)
+               te_ind(i) = 0; 
+            end
+        end 
     end
     tr_ind = tr_ind(tr_ind ~= 0);
     te_ind = te_ind(te_ind ~= 0);

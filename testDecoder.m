@@ -1,17 +1,21 @@
 % we need to extract the data 
 addpath(genpath('./functions')) %adds folder recursively
-kriton_files = dir('kriton/online');
-load kriton_classifier.mat
+emily_files = dir('emily/online');
+load emily_classifier.mat
 load laplacian_16_10-20_mi.mat
-kriton_files([kriton_files.isdir]) = [];
-file_name = extractfield(kriton_files,'name');
-[s, h, sample_rate] = get_data(strcat('./kriton/online/',file_name{end}));
+emily_files([emily_files.isdir]) = [];
+file_name = extractfield(emily_files,'name');
+[s, h, sample_rate] = get_data(strcat('./emily/online/',file_name{end}));
 % extracting hands
-test_s = s(h(7,2):(h(7,2)+h(7,3)-1),:);
-window = 512;
-window_s = test_s(100:612-1,:);
+inds_hands = find(h(:,1) == 771) + 1;
+inds_legs = find(h(:,1) == 773) + 1;
+ind = inds_legs(1);
+test_s = s(h(ind,2):(h(ind,2)+h(ind,3)-1),:);
+window_s = test_s(1:512,:);
 tic
-[Label,pp,cost] = onlineDecoder(window_s,1,Model,freq_ind,channels);
+support = Classifier;
+prev_decision = [0.5, 0.5];
+[curr_decision,pp] = onlineDecoder(window_s,prev_decision,support);
 toc
 
 

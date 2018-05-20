@@ -52,9 +52,7 @@ accuracy = sum(label == te_events) / length(te_events);
 Classifier.model = Model;
 Classifier.frequencies = freq(freq_ind);
 Classifier.channels = channels;
-Classifier.type = type; 
-load('laplacian_16_10-20_mi.mat');
-Classifier.lap = lap;
+Classifier.type = 
 save('emily_classifier.mat','Classifier')
 toc
 
