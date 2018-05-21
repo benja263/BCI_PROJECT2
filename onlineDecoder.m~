@@ -15,10 +15,9 @@ function [curr_decision, pp] = onlineDecoder(EEG,prev_decision,support)
     psd = get_psd(EEG, freq, sample_rate);
     data = [];
     for i = 1:length(freq_ind)
-        data = [data, psd(freq_ind(i),channels(i))];
+        data = [data, psd(:,freq_ind(i),channels(i))];
     end
-    %toc\
-    a = 0.8;
+    %toc
     [~,pp,~] = predict(classifier,data);  
     [curr_decision] = integrate_posterior(pp,a,prev_decision);
 
@@ -43,12 +42,21 @@ end
 function [integrated_pp] = integrate_posterior(pp,a,prev_decision)
 %This function integrates the posterior probabilities
 
+rows=size(pp,1);
+columns=size(pp,2);
+integrated_pp=zeros(rows,columns);
 
-        integrated_pp=zeros(1,2);
-        integrated_pp(1)=a*prev_decision(1)+(1-a)*pp(1);
-        integrated_pp(2)=a*prev_decision(2)+(1-a)*pp(2);
+for i=1:rows
+    if(i==1)
+        integrated_pp(i,1)=a*prev_decision(1,1)+(1-a)*pp(i,1);
+        integrated_pp(i,2)=a*prev_decision(1,2)+(1-a)*pp(i,2);
+    else
+ integrated_pp(i,1)=a*integrated_pp(i-1,1)+(1-a)*pp(i,1);
+ integrated_pp(i,2)=1-integrated_pp(i,1);
 
-  
+end
+   
+end
 
 
 end

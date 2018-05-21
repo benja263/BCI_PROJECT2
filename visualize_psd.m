@@ -3,6 +3,7 @@ clear all
 clc
 addpath(genpath('./biosig')) %adds folder recursively
 addpath(genpath('./eeglab_current')) %adds folder recursively
+addpath(genpath('./functions'))
 load psd_data.mat
 load channel_location_16_10-20_mi.mat
 
@@ -12,7 +13,33 @@ load channel_location_16_10-20_mi.mat
 
 [feetCar,handsCar,baselineCar]=separationCar(psd_file);
 [feetLap,handsLap,baselineLap]=separationLap(psd_file);
-%%%%% anonymous
+
+%%% choose a subject between [emily,juraj,benjamin,kriton]
+name='kriton';
+j=1;
+for i=1:length(psd_file)
+    if (strfind(psd_file{i,2},name)==3)
+        anonymous_BaselineCAR{j}=baselineCar{1,i};
+        anonymous_Feet_CAR{j}=feetCar{1,i};
+        anonymous_Hands_CAR{j}=handsCar{1,i};
+        anonymous_BaselineLAP{j}=baselineLap{1,i};
+        anonymous_Feet_LAP{j}=feetLap{1,i};
+        anonymous_Hands_LAP{j}=handsLap{1,i};
+        j=j+1;
+        
+        
+    end
+end
+
+anonymous_BaselineCAR=log10(vertcat(anonymous_BaselineCAR{:})+1);
+anonymous_Feet_CAR=log10(vertcat(anonymous_Feet_CAR{:})+1);
+anonymous_Hands_CAR=log10(vertcat(anonymous_Hands_CAR{:})+1);
+anonymous_BaselineLAP=log10(vertcat(anonymous_BaselineLAP{:})+1);
+anonymous_Feet_LAP=log10(vertcat(anonymous_Feet_LAP{:})+1);
+anonymous_Hands_LAP=log10(vertcat(anonymous_Hands_LAP{:})+1);
+
+        
+%%%%% For anonymous
 % anonymous_BaselineCAR=log10(vertcat(baselineCar{1,32},baselineCar{1,33},baselineCar{1,34},baselineCar{1,35})+1);
 % anonymous_Feet_CAR=log10(vertcat(feetCar{1,32},feetCar{1,33},feetCar{1,34},feetCar{1,35})+1);
 % anonymous_Hands_CAR=log10(vertcat(handsCar{1,32},handsCar{1,33},handsCar{1,34},handsCar{1,35})+1);
@@ -20,13 +47,13 @@ load channel_location_16_10-20_mi.mat
 % anonymous_Feet_LAP=log10(vertcat(feetLap{1,32},feetLap{1,33},feetLap{1,34},feetLap{1,35})+1);
 % anonymous_Hands_LAP=log10(vertcat(handsLap{1,32},handsLap{1,33},handsLap{1,34},handsLap{1,35})+1);
 
-%%%% Kriton
-anonymous_BaselineCAR=log10(vertcat(baselineCar{1,24},baselineCar{1,25},baselineCar{1,26},baselineCar{1,27})+1);
-anonymous_Feet_CAR=log10(vertcat(feetCar{1,24},feetCar{1,25},feetCar{1,26},feetCar{1,27})+1);
-anonymous_Hands_CAR=log10(vertcat(handsCar{1,24},handsCar{1,25},handsCar{1,26},handsCar{1,27})+1);
-anonymous_BaselineLAP=log10(vertcat(baselineLap{1,24},baselineLap{1,25},baselineLap{1,26},baselineLap{1,27})+1);
-anonymous_Feet_LAP=log10(vertcat(feetLap{1,24},feetLap{1,25},feetLap{1,26},feetLap{1,27})+1);
-anonymous_Hands_LAP=log10(vertcat(handsLap{1,24},handsLap{1,25},handsLap{1,26},handsLap{1,27})+1);
+%%%% Kriton only 4 onlines
+% anonymous_BaselineCAR=log10(vertcat(baselineCar{1,24},baselineCar{1,25},baselineCar{1,26},baselineCar{1,27})+1);
+% anonymous_Feet_CAR=log10(vertcat(feetCar{1,24},feetCar{1,25},feetCar{1,26},feetCar{1,27})+1);
+% anonymous_Hands_CAR=log10(vertcat(handsCar{1,24},handsCar{1,25},handsCar{1,26},handsCar{1,27})+1);
+% anonymous_BaselineLAP=log10(vertcat(baselineLap{1,24},baselineLap{1,25},baselineLap{1,26},baselineLap{1,27})+1);
+% anonymous_Feet_LAP=log10(vertcat(feetLap{1,24},feetLap{1,25},feetLap{1,26},feetLap{1,27})+1);
+% anonymous_Hands_LAP=log10(vertcat(handsLap{1,24},handsLap{1,25},handsLap{1,26},handsLap{1,27})+1);
 
 
 

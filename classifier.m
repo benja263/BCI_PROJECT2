@@ -6,23 +6,23 @@ load psd_data.mat
 %% run
 tic
 freq = 4:2:48;
-% 
-% name = 'kriton';
-% date = '20180323';
-% 
-% data = day_selector(psd_file,name,date);
-% exception_times = {'163958','165113'};
-% [data_for_train, data_for_test] = split_data(data);
-% 
-% date = '20180420';
-% data = day_selector(psd_file,name,date);
-% [~, data_for_test2] = split_data(data);
-% data_for_test = [data_for_test; data_for_test2];
 
-name = 'emily';
-date = '20180326';
+name = 'kriton';
+date = '20180323';
+
 data = day_selector(psd_file,name,date);
-[data_for_train, data_for_test] = split_data(data);
+exception_times = {'163958','165113'};
+[data_for_train, ~] = split_data(data,exception_times);
+
+date = '20180420';
+data = day_selector(psd_file,name,date);
+[~, data_for_test2] = split_data(data);
+data_for_test = [data_for_test; data_for_test2];
+
+% name = 'emily';
+% date = '20180326';
+% data = day_selector(psd_file,name,date);
+% [data_for_train, data_for_test] = split_data(data);
 
 type = 1; % 1 car, 2 lap
 Classifier_plotFrequencyMap(data_for_train,type,name,date);
@@ -55,7 +55,7 @@ Classifier.channels = channels;
 Classifier.type = type; 
 load('laplacian_16_10-20_mi.mat');
 Classifier.lap = lap;
-save('emily_classifier.mat','Classifier')
+save('kriton_classifier.mat','Classifier')
 toc
 
 

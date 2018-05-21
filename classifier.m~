@@ -19,10 +19,10 @@ freq = 4:2:48;
 % [~, data_for_test2] = split_data(data);
 % data_for_test = [data_for_test; data_for_test2];
 
-name = 'emily';
-date = '20180326';
-data = day_selector(psd_file,name,date);
-[data_for_train, data_for_test] = split_data(data);
+% name = 'emily';
+% date = '20180326';
+% data = day_selector(psd_file,name,date);
+% [data_for_train, data_for_test] = split_data(data);
 
 type = 1; % 1 car, 2 lap
 Classifier_plotFrequencyMap(data_for_train,type,name,date);
@@ -52,8 +52,10 @@ accuracy = sum(label == te_events) / length(te_events);
 Classifier.model = Model;
 Classifier.frequencies = freq(freq_ind);
 Classifier.channels = channels;
-Classifier.type = 
-save('emily_classifier.mat','Classifier')
+Classifier.type = type; 
+load('laplacian_16_10-20_mi.mat');
+Classifier.lap = lap;
+save('kriton_classifier.mat','Classifier')
 toc
 
 
