@@ -1,7 +1,11 @@
 function [] = plot_discr_map(train_data, train_labels, model, show_histograms)
 %PLOT_DISCR_MAP Summary of this function goes here
 %   Detailed explanation goes here
-w = model.Sigma \ (model.Mu(1,:) - model.Mu(2,:))';
+sigma_sum_classes = sum(model.Sigma, 3);
+if size(sigma_sum_classes, 1) == 1
+    sigma_sum_classes = diag(sigma_sum_classes);
+end
+w = sigma_sum_classes \ (model.Mu(1,:) - model.Mu(2,:))';
 tr_data_trans = train_data * w;
 idx = min(tr_data_trans) - std(tr_data_trans):0.05:max(tr_data_trans) + std(tr_data_trans);
 norm_dist_771 = fitdist(tr_data_trans(train_labels==771), 'Normal');
@@ -18,6 +22,8 @@ end
 if isequal(show_histograms, 1)
     histogram(tr_data_trans(train_labels == 773), 50, 'FaceAlpha', 0.1, 'FaceColor', 'red');
 end
+% histfit(tr_data_trans(train_labels == 771))
+% histfit(tr_data_trans(train_labels == 773))
 hold off;
 legend('both feet', 'both hands');
 end
