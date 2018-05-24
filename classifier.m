@@ -41,7 +41,26 @@ n = size(tr_data,1);
  Model = fitcdiscr(tr_data,tr_events,'DiscrimType','linear', 'ClassNames',...
      [773,771],'Prior','uniform');
 [label,post_prob,cost] = predict(Model,te_data);
-accuracy = sum(label == te_events) / length(te_events);
+Conf_mat_emily = confusionmat(label,te_events);
+Conf_mat_emily = Conf_mat_emily./(sum(Conf_mat_emily(:)));
+emily_accuracy = sum(label == te_events) / length(te_events);
+% creating ROC
+[X,Y,T,AUC,OPTO] = perfcurve(te_events,post_prob(:,1),'773');
+figure('Name','ROC')
+plot(X,Y,'b','LineWidth',2)
+hold on
+grid on
+plot(OPTO(1),OPTO(2),'mo');
+y_T = find(Y == OPTO(2));
+x_T = find(X == OPTO(1));
+opt_Threshold = T(intersect(x_T,y_T));
+xlabel('False Positive Rate')
+ylabel('True Positive Rate')
+title({'ROC ';'True Positive = 773';['AUC = ',num2str(AUC)]});
+string = ['Optimal Thereshold = ',num2str(opt_Threshold)];
+legend('ROC',string)
+
+
 Classifier.model = Model;
 Classifier.frequencies = freq(freq_ind);
 Classifier.channels = channels;
@@ -121,7 +140,24 @@ n = size(tr_data,1);
  Model = fitcdiscr(tr_data,tr_events,'DiscrimType','linear', 'ClassNames',...
      [773,771],'Prior','uniform');
 [label,post_prob,cost] = predict(Model,te_data);
-accuracy = sum(label == te_events) / length(te_events);
+Conf_mat_kriton = confusionmat(label,te_events);
+Conf_mat_kriton = Conf_mat_kriton./(sum(Conf_mat_kriton(:)));
+[X,Y,T,AUC,OPTO] = perfcurve(te_events,post_prob(:,1),'773');
+figure('Name','ROC')
+plot(X,Y,'b','LineWidth',2)
+hold on
+grid on
+plot(OPTO(1),OPTO(2),'mo');
+y_T = find(Y == OPTO(2));
+x_T = find(X == OPTO(1));
+opt_Threshold = T(intersect(x_T,y_T));
+xlabel('False Positive Rate')
+ylabel('True Positive Rate')
+title({'ROC ';'True Positive = 773';['AUC = ',num2str(AUC)]});
+string = ['Optimal Thereshold = ',num2str(opt_Threshold)];
+legend('ROC',string)
+
+kriton_accuracy = sum(label == te_events) / length(te_events);
 Classifier.model = Model;
 Classifier.frequencies = freq(freq_ind);
 Classifier.channels = channels;
@@ -171,28 +207,7 @@ name = 'juraj';
 date = '20180326';
 
 data = day_selector(psd_file,name,date);
-
 [data_for_train, data_for_test] = split_data(data);
-
-
-name = 'kriton';
-date = '20180323';
-
-data = day_selector(psd_file,name,date);
-exception_times = {'163958','165113'};
-[data_for_train, ~] = split_data(data,exception_times);
-
-date = '20180420';
-data = day_selector(psd_file,name,date);
-[~, data_for_test2] = split_data(data);
-data_for_test = [data_for_test; data_for_test2];
-
-% name = 'emily';
-% date = '20180326';
-% data = day_selector(psd_file,name,date);
-% [data_for_train, data_for_test] = split_data(data);
-
-
 
 type = 1; % 1 car, 2 lap
 Classifier_plotFrequencyMap(data_for_train,type,name,date);
@@ -220,7 +235,24 @@ n = size(tr_data,1);
  Model = fitcdiscr(tr_data,tr_events,'DiscrimType','linear', 'ClassNames',...
      [773,771],'Prior','uniform');
 [label,post_prob,cost] = predict(Model,te_data);
-accuracy = sum(label == te_events) / length(te_events);
+Conf_mat_juraj = confusionmat(label,te_events); 
+Conf_mat_juraj = Conf_mat_juraj./(sum(Conf_mat_juraj(:)));
+[X,Y,T,AUC,OPTO] = perfcurve(te_events,post_prob(:,1),'773');
+figure('Name','ROC')
+plot(X,Y,'b','LineWidth',2)
+hold on
+grid on
+plot(OPTO(1),OPTO(2),'mo');
+y_T = find(Y == OPTO(2));
+x_T = find(X == OPTO(1));
+opt_Threshold = T(intersect(x_T,y_T));
+xlabel('False Positive Rate')
+ylabel('True Positive Rate')
+title({'ROC ';'True Positive = 773';['AUC = ',num2str(AUC)]});
+string = ['Optimal Thereshold = ',num2str(opt_Threshold)];
+legend('ROC',string)
+
+juraj_accuracy = sum(label == te_events) / length(te_events);
 Classifier.model = Model;
 Classifier.frequencies = freq(freq_ind);
 Classifier.channels = channels;
@@ -302,7 +334,23 @@ n = size(tr_data,1);
  Model = fitcdiscr(tr_data,tr_events,'DiscrimType','linear', 'ClassNames',...
      [773,771],'Prior','uniform');
 [label,post_prob,cost] = predict(Model,te_data);
-accuracy = sum(label == te_events) / length(te_events);
+Conf_mat_benja = confusionmat(label,te_events); 
+Conf_mat_benja = Conf_mat_benja./(sum(Conf_mat_benja(:)));
+[X,Y,T,AUC,OPTO] = perfcurve(te_events,post_prob(:,1),'773');
+figure('Name','ROC')
+plot(X,Y,'b','LineWidth',2)
+hold on
+grid on
+plot(OPTO(1),OPTO(2),'mo');
+y_T = find(Y == OPTO(2));
+x_T = find(X == OPTO(1));
+opt_Threshold = T(intersect(x_T,y_T));
+xlabel('False Positive Rate')
+ylabel('True Positive Rate')
+title({'ROC ';'True Positive = 773';['AUC = ',num2str(AUC)]});
+string = ['Optimal Thereshold = ',num2str(opt_Threshold)];
+legend('ROC',string)
+benja_accuracy = sum(label == te_events) / length(te_events);
 Classifier.model = Model;
 Classifier.frequencies = freq(freq_ind);
 Classifier.channels = channels;
