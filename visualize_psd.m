@@ -15,7 +15,7 @@ load channel_location_16_10-20_mi.mat
 [feetLap,handsLap,baselineLap]=separationLap(psd_file);
 
 %%% choose a subject between [emily,juraj,benjamin,kriton]
-name='kriton';
+name='juraj/offline';
 j=1;
 for i=1:length(psd_file)
     if (strfind(psd_file{i,2},name)==3)
@@ -47,7 +47,7 @@ anonymous_Hands_LAP=log10(vertcat(anonymous_Hands_LAP{:})+1);
 % anonymous_Feet_LAP=log10(vertcat(feetLap{1,32},feetLap{1,33},feetLap{1,34},feetLap{1,35})+1);
 % anonymous_Hands_LAP=log10(vertcat(handsLap{1,32},handsLap{1,33},handsLap{1,34},handsLap{1,35})+1);
 
-%%%% Kriton only 4 onlines
+%%% Kriton only 4 onlines
 % anonymous_BaselineCAR=log10(vertcat(baselineCar{1,24},baselineCar{1,25},baselineCar{1,26},baselineCar{1,27})+1);
 % anonymous_Feet_CAR=log10(vertcat(feetCar{1,24},feetCar{1,25},feetCar{1,26},feetCar{1,27})+1);
 % anonymous_Hands_CAR=log10(vertcat(handsCar{1,24},handsCar{1,25},handsCar{1,26},handsCar{1,27})+1);

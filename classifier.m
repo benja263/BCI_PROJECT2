@@ -1,8 +1,12 @@
 %% load
+close all
+clear all
+clc
+
 addpath(genpath('./biosig')) %adds folder recursively
 addpath(genpath('./eeglab_current')) %adds folder recursively
 addpath(genpath('./functions')) %adds folder recursively
-%load psd_data.mat
+load psd_data.mat
 
 
 

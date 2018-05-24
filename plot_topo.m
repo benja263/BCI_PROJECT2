@@ -6,9 +6,9 @@ addpath(genpath('./functions'))
 
 load 'channel_location_16_10-20_mi.mat'
 
-filenames = ['./emily_offline_raw/aj9.20180326.153615.offline.mi.mi_bhbf.gdf';...
-    './emily_offline_raw/aj9.20180326.154532.offline.mi.mi_bhbf.gdf'; ...
-    './emily_offline_raw/aj9.20180326.155323.offline.mi.mi_bhbf.gdf'];
+filenames = ['./emily/offline/aj9.20180326.153615.offline.mi.mi_bhbf.gdf';...
+    './emily/offline/aj9.20180326.154532.offline.mi.mi_bhbf.gdf'; ...
+    './emily/offline/aj9.20180326.155323.offline.mi.mi_bhbf.gdf'];
 
 [s, h, sample_rate] = get_data(filenames);
 lap_s = lapFiltering(s);
@@ -16,6 +16,7 @@ labels =  event_separation(s, h);
 car_s = car(s);
 left_raw = s(labels==771,:);
 right_raw = s(labels==773,:);
+baseline=s(labels==786,:);
 left_car = car_s(labels==771,:);
 right_car = car_s(labels==773,:);
 left_lap = lap_s(labels==771,:);
@@ -23,11 +24,12 @@ right_lap = lap_s(labels==773,:);
 
 figure
 subplot(2,3,1)
-topoplot(mean(left_raw),chanlocs16,'maplimits','maxmin');%limitsCARMU);
+test=(mean(left_raw)-mean(baseline))./(mean(baseline));
+topoplot(test,chanlocs16,'maplimits','maxmin');%limitsCARMU);
 colorbar
 title('Feet raw')
 subplot(2,3,2)
-topoplot(mean(left_car),chanlocs16,'maplimits','maxmin');
+topoplot((mean(left_car)-mean(baseline))./mean(baseline),chanlocs16,'maplimits','maxmin');
 colorbar
 title('Feet CAR')
 subplot(2,3,3)
