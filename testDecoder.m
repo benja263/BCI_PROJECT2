@@ -9,7 +9,7 @@ file_name = extractfield(emily_files,'name');
 % extracting hands
 inds_hands = find(h(:,1) == 773) + 1;
 inds_legs = find(h(:,1) == 771) + 1;
-ind = inds_hands(1);
+ind = inds_legs(1);
 test_s = s(h(ind,2):(h(ind,2)+h(ind,3)-1),:);
 window_s = test_s(1:512,:);
 tic
