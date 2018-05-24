@@ -14,12 +14,18 @@ name = 'emily';
 date = '20180326';
 data = day_selector(psd_file,name,date);
 [data_for_train, data_for_test] = split_data(data);
+date = '20180430';
+data = day_selector(psd_file,name,date);
+added_train_trials = {'151410','151929'};
+[data_for_train_day2, data_for_test_day2] = split_data(data,added_train_trials);
+data_for_train = [data_for_train; data_for_train_day2];
+data_for_test = [data_for_test; data_for_test_day2];
 
 type = 1; % 1 car, 2 lap
 Classifier_plotFrequencyMap(data_for_train,type,name,date);
 fisher = calculateClassifierFisher(data_for_train,type)';
 
-tol = 0.95*max(fisher(:));
+tol = 0.5*max(fisher(:));
 [channels,freq_ind] = find(fisher >= tol);
 psd_data = data_for_train{2,type};
 tr_events = data_for_train{2,3};
