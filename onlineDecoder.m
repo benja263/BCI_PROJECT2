@@ -2,7 +2,7 @@ function [curr_decision, pp] = onlineDecoder(EEG,prev_decision,support)
     type = support.type;
     classifier = support.model;
     freq = 4:2:48;
-    [~, freq_ind, ~] = intersect(freq,support.frequencies);
+
     channels = support.channels;
     if type == 1 % car
         EEG = car(EEG);
@@ -14,8 +14,9 @@ function [curr_decision, pp] = onlineDecoder(EEG,prev_decision,support)
     sample_rate = 512;
     psd = get_psd(EEG, freq, sample_rate);
     data = [];
-    for i = 1:length(freq_ind)
-        data = [data, psd(freq_ind(i),channels(i))];
+    for i = 1:length(channels)
+        [~, freq_ind, ~] = intersect(freq,support.frequencies(i));
+        data = [data, psd(freq_ind,channels(i))];
     end
     %toc\
     a = 0.8;
