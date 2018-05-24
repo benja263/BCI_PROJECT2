@@ -113,18 +113,23 @@ set(gca,'FontSize',16)
 tic
 freq = 4:2:48;
 name = 'kriton';
-date = '20180323';
 
+% date = '20180323';
+% data = day_selector(psd_file,name,date);
+% [data_for_train, data_for_test] = split_data(data);
+
+date = '20180518';
 data = day_selector(psd_file,name,date);
-exception_times = {'163958','165113'};
-[data_for_train, data_for_test] = split_data(data);
+exception_times = {'152549','153140'};
+[data_for_train, data_for_test] = split_data(data,exception_times);
+
 
 
 type = 1; % 1 car, 2 lap
 Classifier_plotFrequencyMap(data_for_train,type,name,date);
 fisher = calculateClassifierFisher(data_for_train,type)';
 
-tol = 0.95*max(fisher(:));
+tol = 0.85*max(fisher(:));
 [channels,freq_ind] = find(fisher >= tol);
 psd_data = data_for_train{2,type};
 tr_events = data_for_train{2,3};
