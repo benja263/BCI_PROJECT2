@@ -42,11 +42,11 @@ end
 [te_data,te_events] = CleanData(te_data,te_events);
 n = size(tr_data,1);
 % 
-% Model = fitcdiscr(tr_data,tr_events,'DiscrimType','linear', 'ClassNames',...
-%     [773,771],'Prior','uniform','OptimizeHyperParameters','all');
- Model = fitcdiscr(tr_data,tr_events,'DiscrimType','linear', 'ClassNames',...
+ %Model = fitcdiscr(tr_data,tr_events,'DiscrimType','linear', 'ClassNames',...
+ %    [773,771],'Prior','uniform','OptimizeHyperParameters','all');
+ Model = fitcdiscr(tr_data,tr_events,'DiscrimType','diagquadratic', 'ClassNames',...
      [773,771],'Prior','uniform');
-[label,post_prob,cost] = predict(Model,te_data);
+[label,post_prob,~] = predict(Model,te_data);
 Conf_mat_emily = confusionmat(label,te_events);
 Conf_mat_emily = Conf_mat_emily./(sum(Conf_mat_emily(:)));
 emily_accuracy = sum(label == te_events) / length(te_events);
@@ -93,7 +93,7 @@ end
 nb_feature_vector = 1:nb_features;
 accuracies = zeros(nb_features,1);
 for feature = 1:nb_features
-    Model = fitcdiscr(tr_data(:,1:feature),tr_events,'DiscrimType','linear', 'ClassNames',...
+    Model = fitcdiscr(tr_data(:,1:feature),tr_events,'DiscrimType','diagquadratic', 'ClassNames',...
         [773,771],'Prior','uniform');
     [label,post_prob,cost] = predict(Model,te_data(:,1:feature));
     accuracies(feature) = sum(label == te_events) / length(te_events);
