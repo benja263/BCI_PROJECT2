@@ -69,7 +69,7 @@ ylabel('True Positive Rate')
 title({'ROC ';'True Positive = 773';['AUC = ',num2str(AUC)]});
 string = ['Optimal Thereshold = ',num2str(opt_Threshold)];
 legend('ROC',string)
-
+set(gca,'FontSize',16)
 
 Classifier.model = Model;
 Classifier.frequencies = freq(freq_ind);
@@ -151,8 +151,8 @@ end
 n = size(tr_data,1);
 % 
 % Model = fitcdiscr(tr_data,tr_events,'DiscrimType','linear', 'ClassNames',...
-%     [773,771],'Prior','uniform','OptimizeHyperParameters','all');
- Model = fitcdiscr(tr_data,tr_events,'DiscrimType','linear', 'ClassNames',...
+%      [773,771],'Prior','uniform','OptimizeHyperParameters','all');
+ Model = fitcdiscr(tr_data,tr_events,'DiscrimType','pseudoLinear', 'ClassNames',...
      [773,771],'Prior','uniform');
 [label,post_prob,cost] = predict(Model,te_data);
 Conf_mat_kriton = confusionmat(label,te_events);
@@ -171,6 +171,7 @@ ylabel('True Positive Rate')
 title({'ROC ';'True Positive = 773';['AUC = ',num2str(AUC)]});
 string = ['Optimal Thereshold = ',num2str(opt_Threshold)];
 legend('ROC',string)
+set(gca,'FontSize',16)
 
 kriton_accuracy = sum(label == te_events) / length(te_events);
 Classifier.model = Model;
@@ -199,7 +200,7 @@ end
 nb_feature_vector = 1:nb_features;
 accuracies = zeros(nb_features,1);
 for feature = 1:nb_features
-    Model = fitcdiscr(tr_data(:,1:feature),tr_events,'DiscrimType','linear', 'ClassNames',...
+    Model = fitcdiscr(tr_data(:,1:feature),tr_events,'DiscrimType','pseudoLinear', 'ClassNames',...
         [773,771],'Prior','uniform');
     [label,post_prob,cost] = predict(Model,te_data(:,1:feature));
     accuracies(feature) = sum(label == te_events) / length(te_events);
@@ -243,11 +244,11 @@ end
 
 [tr_data,tr_events] = CleanData(tr_data,tr_events);
 [te_data,te_events] = CleanData(te_data,te_events);
-n = size(tr_data,1);
-% 
+
+
 % Model = fitcdiscr(tr_data,tr_events,'DiscrimType','linear', 'ClassNames',...
-%     [773,771],'Prior','uniform','OptimizeHyperParameters','all');
- Model = fitcdiscr(tr_data,tr_events,'DiscrimType','linear', 'ClassNames',...
+%      [773,771],'Prior','uniform','OptimizeHyperParameters','all');
+ Model = fitcdiscr(tr_data,tr_events,'DiscrimType','pseudoQuadratic', 'ClassNames',...
      [773,771],'Prior','uniform');
 [label,post_prob,cost] = predict(Model,te_data);
 Conf_mat_juraj = confusionmat(label,te_events); 
@@ -266,6 +267,7 @@ ylabel('True Positive Rate')
 title({'ROC ';'True Positive = 773';['AUC = ',num2str(AUC)]});
 string = ['Optimal Thereshold = ',num2str(opt_Threshold)];
 legend('ROC',string)
+set(gca,'FontSize',16)
 
 juraj_accuracy = sum(label == te_events) / length(te_events);
 Classifier.model = Model;
@@ -297,7 +299,7 @@ end
 nb_feature_vector = 1:nb_features;
 accuracies = zeros(nb_features,1);
 for feature = 1:nb_features
-    Model = fitcdiscr(tr_data(:,1:feature),tr_events,'DiscrimType','linear', 'ClassNames',...
+    Model = fitcdiscr(tr_data(:,1:feature),tr_events,'DiscrimType','pseudoQuadratic', 'ClassNames',...
         [773,771],'Prior','uniform');
     [label,post_prob,cost] = predict(Model,te_data(:,1:feature));
     accuracies(feature) = sum(label == te_events) / length(te_events);
@@ -345,8 +347,8 @@ end
 n = size(tr_data,1);
 % 
 % Model = fitcdiscr(tr_data,tr_events,'DiscrimType','linear', 'ClassNames',...
-%     [773,771],'Prior','uniform','OptimizeHyperParameters','all');
- Model = fitcdiscr(tr_data,tr_events,'DiscrimType','linear', 'ClassNames',...
+ %    [773,771],'Prior','uniform','OptimizeHyperParameters','all');
+ Model = fitcdiscr(tr_data,tr_events,'DiscrimType','pseudoLinear', 'ClassNames',...
      [773,771],'Prior','uniform');
 [label,post_prob,cost] = predict(Model,te_data);
 Conf_mat_benja = confusionmat(label,te_events); 
@@ -365,6 +367,8 @@ ylabel('True Positive Rate')
 title({'ROC ';'True Positive = 773';['AUC = ',num2str(AUC)]});
 string = ['Optimal Thereshold = ',num2str(opt_Threshold)];
 legend('ROC',string)
+set(gca,'FontSize',16)
+
 benja_accuracy = sum(label == te_events) / length(te_events);
 Classifier.model = Model;
 Classifier.frequencies = freq(freq_ind);
@@ -392,7 +396,7 @@ end
 nb_feature_vector = 1:nb_features;
 accuracies = zeros(nb_features,1);
 for feature = 1:nb_features
-    Model = fitcdiscr(tr_data(:,1:feature),tr_events,'DiscrimType','linear', 'ClassNames',...
+    Model = fitcdiscr(tr_data(:,1:feature),tr_events,'DiscrimType','pseudoLinear', 'ClassNames',...
         [773,771],'Prior','uniform');
     [label,post_prob,cost] = predict(Model,te_data(:,1:feature));
     accuracies(feature) = sum(label == te_events) / length(te_events);
