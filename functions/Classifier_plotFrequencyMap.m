@@ -18,11 +18,12 @@ function Classifier_plotFrequencyMap(data,type,user,date)
     xlabel('Frequencies [Hz]');
     xticklabels(4:2:48);
     colorbar;
-    set(gca,'FontSize',16);
+    set(gca,'FontSize',36);
     set(gca,'XTick', 1:1:23);
     set(gca,'YTick',2:2:16);
     string = [user, ' feature discriminability ', text, ' filtering ', date];
-    title(string);
+    %title(string);
+   
 
     
 

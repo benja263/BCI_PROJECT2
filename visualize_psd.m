@@ -15,7 +15,7 @@ load channel_location_16_10-20_mi.mat
 [feetLap,handsLap,baselineLap]=separationLap(psd_file);
 
 %%% choose a subject between [emily,juraj,benjamin,kriton]
-name='juraj/offline';
+name='kriton';
 j=1;
 for i=1:length(psd_file)
     if (strfind(psd_file{i,2},name)==3)
@@ -83,6 +83,7 @@ concMUcar=[ERDhandsMuCAR ; ERDfeetMuCAR];
 minimumCARMU=min(concMUcar(:));
 maximumCARMU=max(concMUcar(:));
 limitsCARMU=[minimumCARMU;maximumCARMU];
+limitsCARMU=[-0.2;0];
 figure
 
 subplot(2,2,1)
@@ -116,6 +117,7 @@ concMUlap=[ERDhandsMuLAP;ERDfeetMuLAP];
 minimumLAPMU=min(concMUlap(:));
 maximumLAPMU=max(concMUlap(:));
 limitsLAPMU=[minimumLAPMU;maximumLAPMU];
+limitsLAPMU=[-0.2;0.1];
 
 
 subplot(2,2,3)

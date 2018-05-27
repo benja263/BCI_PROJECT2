@@ -13,7 +13,9 @@ load psd_data.mat
 %% Emily Classifier
 tic
 freq = 4:2:48;
-
+fontsize = 36;
+linewidth = 5;
+markersize = 12;
 name = 'emily';
 date = '20180326';
 data = day_selector(psd_file,name,date);
@@ -57,24 +59,27 @@ emily_accuracy = sum(label == te_events) / length(te_events);
 % creating ROC
 [X,Y,T,AUC,OPTO] = perfcurve(te_events,post_prob(:,1),'773');
 figure('Name','ROC')
-plot(X,Y,'b','LineWidth',2)
+plot(X,Y,'b','LineWidth',linewidth)
 hold on
 grid on
-plot(OPTO(1),OPTO(2),'mo');
+plot(OPTO(1),OPTO(2),'mo', 'MarkerSize',markersize, 'MarkerFaceColor','m');
 y_T = find(Y == OPTO(2));
 x_T = find(X == OPTO(1));
-opt_Threshold = T(intersect(x_T,y_T));
+opt_Threshold = T(intersect(x_T,y_T))
 xlabel('False Positive Rate')
 ylabel('True Positive Rate')
-title({'ROC ';'True Positive = 773';['AUC = ',num2str(AUC)]});
+%title({'ROC ';'True Positive = 773';['AUC = ',num2str(AUC)]});
 string = ['Optimal Thereshold = ',num2str(opt_Threshold)];
 legend('ROC',string)
-set(gca,'FontSize',16)
+set(gca,'FontSize',fontsize)
+AUC
 
 Classifier.model = Model;
 Classifier.frequencies = freq(freq_ind);
 Classifier.channels = channels;
 Classifier.type = type; 
+Classifier.tr_data = tr_data;
+Classifier.labels = tr_events;
 load('laplacian_16_10-20_mi.mat');
 Classifier.lap = lap;
 save('emily_classifier.mat','Classifier')
@@ -103,25 +108,27 @@ for feature = 1:nb_features
     accuracies(feature) = sum(label == te_events) / length(te_events);
 end
 figure('Name','Accuracy vs Nb of Features')
-plot(nb_feature_vector,accuracies,'b','LineWidth',2)
+plot(nb_feature_vector,accuracies,'b','LineWidth',linewidth)
 hold on
 grid on
 grid minor
 xlabel('Number of Features')
 ylabel('Accuracy [%]')
 ylim([0,1])
-title('Emily')
-set(gca,'FontSize',16)
+
+set(gca,'FontSize',fontsize)
 
 %% Kriton Classifier
 tic
 freq = 4:2:48;
 name = 'kriton';
 
+% bad day
 % date = '20180323';
 % data = day_selector(psd_file,name,date);
 % [data_for_train, data_for_test] = split_data(data);
 
+% good day
 date = '20180518';
 data = day_selector(psd_file,name,date);
 exception_times = {'152549','153140'};
@@ -159,25 +166,28 @@ Conf_mat_kriton = confusionmat(label,te_events);
 Conf_mat_kriton = Conf_mat_kriton./(sum(Conf_mat_kriton(:)));
 [X,Y,T,AUC,OPTO] = perfcurve(te_events,post_prob(:,1),'773');
 figure('Name','ROC')
-plot(X,Y,'b','LineWidth',2)
+plot(X,Y,'b','LineWidth',linewidth)
 hold on
 grid on
-plot(OPTO(1),OPTO(2),'mo');
+plot(OPTO(1),OPTO(2),'mo', 'MarkerSize',markersize, 'MarkerFaceColor','m');
 y_T = find(Y == OPTO(2));
 x_T = find(X == OPTO(1));
-opt_Threshold = T(intersect(x_T,y_T));
+opt_Threshold = T(intersect(x_T,y_T))
 xlabel('False Positive Rate')
 ylabel('True Positive Rate')
-title({'ROC ';'True Positive = 773';['AUC = ',num2str(AUC)]});
+%title({'ROC ';'True Positive = 773';['AUC = ',num2str(AUC)]});
+AUC
 string = ['Optimal Thereshold = ',num2str(opt_Threshold)];
 legend('ROC',string)
-set(gca,'FontSize',16)
+set(gca,'FontSize',fontsize)
 
 kriton_accuracy = sum(label == te_events) / length(te_events);
 Classifier.model = Model;
 Classifier.frequencies = freq(freq_ind);
 Classifier.channels = channels;
 Classifier.type = type; 
+Classifier.tr_data = tr_data;
+Classifier.labels = tr_events;
 load('laplacian_16_10-20_mi.mat');
 Classifier.lap = lap;
 save('kriton_classifier.mat','Classifier')
@@ -206,15 +216,15 @@ for feature = 1:nb_features
     accuracies(feature) = sum(label == te_events) / length(te_events);
 end
 figure('Name','Accuracy vs Nb of Features')
-plot(nb_feature_vector,accuracies,'b','LineWidth',2)
+plot(nb_feature_vector,accuracies,'b','LineWidth',linewidth)
 hold on
 grid on
 grid minor
 xlabel('Number of Features')
 ylabel('Accuracy [%]')
 ylim([0,1])
-title('Kriton')
-set(gca,'FontSize',16)
+
+set(gca,'FontSize',fontsize)
 
 %% Juraj
 tic
@@ -255,25 +265,28 @@ Conf_mat_juraj = confusionmat(label,te_events);
 Conf_mat_juraj = Conf_mat_juraj./(sum(Conf_mat_juraj(:)));
 [X,Y,T,AUC,OPTO] = perfcurve(te_events,post_prob(:,1),'773');
 figure('Name','ROC')
-plot(X,Y,'b','LineWidth',2)
+plot(X,Y,'b','LineWidth',linewidth)
 hold on
 grid on
-plot(OPTO(1),OPTO(2),'mo');
+plot(OPTO(1),OPTO(2),'mo', 'MarkerSize',markersize, 'MarkerFaceColor','m');
 y_T = find(Y == OPTO(2));
 x_T = find(X == OPTO(1));
-opt_Threshold = T(intersect(x_T,y_T));
+opt_Threshold = T(intersect(x_T,y_T))
 xlabel('False Positive Rate')
 ylabel('True Positive Rate')
-title({'ROC ';'True Positive = 773';['AUC = ',num2str(AUC)]});
+%title({'ROC ';'True Positive = 773';['AUC = ',num2str(AUC)]});
+AUC
 string = ['Optimal Thereshold = ',num2str(opt_Threshold)];
 legend('ROC',string)
-set(gca,'FontSize',16)
+set(gca,'FontSize',fontsize)
 
 juraj_accuracy = sum(label == te_events) / length(te_events);
 Classifier.model = Model;
 Classifier.frequencies = freq(freq_ind);
 Classifier.channels = channels;
 Classifier.type = type; 
+Classifier.tr_data = tr_data;
+Classifier.labels = tr_events;
 load('laplacian_16_10-20_mi.mat');
 Classifier.lap = lap;
 
@@ -305,15 +318,14 @@ for feature = 1:nb_features
     accuracies(feature) = sum(label == te_events) / length(te_events);
 end
 figure('Name','Accuracy vs Nb of Features')
-plot(nb_feature_vector,accuracies,'b','LineWidth',2)
+plot(nb_feature_vector,accuracies,'b','LineWidth',linewidth)
 hold on
 grid on
 grid minor
 xlabel('Number of Features')
 ylabel('Accuracy [%]')
 ylim([0,1])
-title('Juraj')
-set(gca,'FontSize',16)
+set(gca,'FontSize',fontsize)
 
 %% Benjamin
 freq = 4:2:48;
@@ -355,25 +367,28 @@ Conf_mat_benja = confusionmat(label,te_events);
 Conf_mat_benja = Conf_mat_benja./(sum(Conf_mat_benja(:)));
 [X,Y,T,AUC,OPTO] = perfcurve(te_events,post_prob(:,1),'773');
 figure('Name','ROC')
-plot(X,Y,'b','LineWidth',2)
+plot(X,Y,'b','LineWidth',linewidth)
 hold on
 grid on
-plot(OPTO(1),OPTO(2),'mo');
+plot(OPTO(1),OPTO(2),'mo', 'MarkerSize',markersize, 'MarkerFaceColor','m');
 y_T = find(Y == OPTO(2));
 x_T = find(X == OPTO(1));
-opt_Threshold = T(intersect(x_T,y_T));
+opt_Threshold = T(intersect(x_T,y_T))
 xlabel('False Positive Rate')
 ylabel('True Positive Rate')
-title({'ROC ';'True Positive = 773';['AUC = ',num2str(AUC)]});
+%title({'ROC ';'True Positive = 773';['AUC = ',num2str(AUC)]});
 string = ['Optimal Thereshold = ',num2str(opt_Threshold)];
 legend('ROC',string)
-set(gca,'FontSize',16)
+AUC
+set(gca,'FontSize',fontsize)
 
 benja_accuracy = sum(label == te_events) / length(te_events);
 Classifier.model = Model;
 Classifier.frequencies = freq(freq_ind);
 Classifier.channels = channels;
 Classifier.type = type; 
+Classifier.tr_data = tr_data;
+Classifier.labels = tr_events;
 load('laplacian_16_10-20_mi.mat');
 Classifier.lap = lap;
 save('benjamin_classifier.mat','Classifier')
@@ -402,12 +417,11 @@ for feature = 1:nb_features
     accuracies(feature) = sum(label == te_events) / length(te_events);
 end
 figure('Name','Accuracy vs Nb of Features')
-plot(nb_feature_vector,accuracies,'b','LineWidth',2)
+plot(nb_feature_vector,accuracies,'b','LineWidth',linewidth)
 hold on
 grid on
 grid minor
 xlabel('Number of Features')
 ylabel('Accuracy [%]')
 ylim([0,1])
-title('Benjamin')
-set(gca,'FontSize',16)
+set(gca,'FontSize',fontsize)
