@@ -7,24 +7,30 @@ if size(sigma_sum_classes, 1) == 1
 end
 w = sigma_sum_classes \ (model.Mu(1,:) - model.Mu(2,:))';
 tr_data_trans = train_data * w;
-idx = min(tr_data_trans) - std(tr_data_trans):0.05:max(tr_data_trans) + std(tr_data_trans);
+idx = (min(tr_data_trans) - 2 * std(tr_data_trans)):0.05:(max(tr_data_trans) + 2* std(tr_data_trans));
 norm_dist_771 = fitdist(tr_data_trans(train_labels==771), 'Normal');
 y_771 = pdf(norm_dist_771, idx);
 norm_dist_773 = fitdist(tr_data_trans(train_labels==773), 'Normal');
 y_773 = pdf(norm_dist_773, idx);
-figure;
-plot(idx, y_771 * 1000, 'LineWidth',2, 'Color', 'blue');
+fig = figure;
+set(fig,'defaultAxesColorOrder',[[0, 0, 0]; [0, 0, 0]]);
+plot(idx, y_771, 'LineWidth',2, 'Color', 'blue');
 hold on;
-plot(idx, y_773 * 1000, 'LineWidth',2, 'Color', 'red');
+plot(idx, y_773, 'LineWidth',2, 'Color', 'red');
+ylabel('p(x)')
 if isequal(show_histograms, 1)
+    yyaxis right
     histogram(tr_data_trans(train_labels == 771), 50, 'FaceAlpha', 0.1, 'FaceColor', 'blue');
 end
 if isequal(show_histograms, 1)
     histogram(tr_data_trans(train_labels == 773), 50, 'FaceAlpha', 0.1, 'FaceColor', 'red');
+    ylabel('window count')
 end
 % histfit(tr_data_trans(train_labels == 771))
 % histfit(tr_data_trans(train_labels == 773))
 hold off;
-legend('both feet', 'both hands');
+xlabel('PSD projected on most discriminant dimension')
+legend({'both feet', 'both hands'}, 'Location', 'northwest');
+set(findall(gcf,'-property','FontSize'),'FontSize',16)
 end
 
